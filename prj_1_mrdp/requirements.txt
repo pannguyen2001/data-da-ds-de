@@ -1,0 +1,24 @@
+# process data
+pandas
+openpyxl
+python_calamine
+
+# logging and debugging
+loguru
+snoop
+snakeviz
+
+# visualize data
+matplotlib
+
+# craw db
+selenium
+lxml
+scrapy
+html5lib
+beautifulsoup4
+
+# other
+pathlib
+pytz
+python-dotenv

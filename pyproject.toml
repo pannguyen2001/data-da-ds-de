@@ -1,7 +1,22 @@
 [project]
-name = "myapp"
+name = "prj_1_mrdp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Project 01: My raw data pipeline. Bulid a simple data pipeline from scratch using python, pandas, sqlite. Using loguru for logging and debugging; selenium for crawling data."
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "pandas",
+    "openpyxl",
+    "python_calamine",
+    "loguru",
+    "snoop",
+    "matplotlib",
+    "snakeviz",
+    "pathlib",
+    "selenium",
+    "lxml",
+    "scrapy",
+    "html5lib",
+    "beautifulsoup4",
+    "pytz"
+]
