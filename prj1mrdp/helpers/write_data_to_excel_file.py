@@ -1,7 +1,13 @@
 import pandas as pd
 import os.path
+from string import Template
 # from .logger import logger_wrapper
 from .logger import other_common_logger
+
+write_successfully_template = Template("""Write data to excel file successfully.
+Detail info:
+    Sheet name: ${sheet_name}.
+    File: ${file_out}.""")
 
 @other_common_logger.catch
 def write_data_to_excel_file(
@@ -52,13 +58,5 @@ def write_data_to_excel_file(
                 df= pd.DataFrame(data= data_input)
                 df.to_excel(writer, sheet_name=sheet_name, index=is_index_input, startrow= start_row, startcol= start_col)
 
-    # other_common_logger.info(f"Write data successfully! \n Detail info: \n\tSheet name: {sheet_name}.\n\tFile: {file_out}.")
-    other_common_logger.info(
-        f"""
-            Write data to excel file successfully.
-            Detail info:
-                Sheet name: {sheet_name}.
-                File: {file_out}.
-        """
-    )
+    other_common_logger.info(write_successfully_template.safe_substitute(sheet_name=sheet_name, file_out=file_out))
     return True

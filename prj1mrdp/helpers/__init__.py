@@ -1,8 +1,9 @@
+from .check_file_exist import check_file_exist
 from .connect_db import connect_db, close_db
 from .csv_to_sql import csv_to_sql
 from .excel_to_sql import excel_to_sql
 from .json_to_sql import json_to_sql
-# from .logger import logger_wrapper
+from .logger import *
 from .normalize_string import normalize_string
 from .profile import profile
 from .read_csv_file import read_csv_file
@@ -15,12 +16,13 @@ from .write_data_to_excel_file import write_data_to_excel_file
 
 
 __all__ = [
+    "check_file_exist",
     "connect_db",
     "csv_to_sql",
     "close_db",
     "excel_to_sql",
     "json_to_sql",
-    # "logger_wrapper",
+    "logger",
     "normalize_string",
     "profile",
     "read_csv_file",
