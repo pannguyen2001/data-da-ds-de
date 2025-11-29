@@ -22,3 +22,6 @@ beautifulsoup4
 pathlib
 pytz
 python-dotenv
+
+# test
+pytest

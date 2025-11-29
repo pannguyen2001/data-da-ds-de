@@ -1,13 +1,12 @@
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Union, Any, Callable 
+from typing import Dict, List, Union, Any, Callable
 
 class DataValidation:
     def __init__(
         self,
         df: pd.DataFrame,
         validation_config: Dict[str, Dict[str, Any]],
-        error_messages: Dict = None
         ):
         self.df = df
         self.validation_config = validation_config

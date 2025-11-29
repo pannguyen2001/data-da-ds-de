@@ -1,0 +1,13 @@
+Before data validation, need read and IDA data (Initial data analyst) -> plan strategy for data validation and data processing:
+- convert dtype
+- fill value
+- outliner
+- format
+- split data
+- recalculate,...
+
+Validate data: need ensure: not change any raw data, not add or remove data in this phase, just validate and return result report for error data, summary report for error data, return dat chuan data quality for next phase: preporcessing/cleaning/...
+
+- Data preprocessing:xac thuc, dam bao tinh dung dan, toan ven dl, ko lm anh huong den chat luong dl, moi phuong thuc lm sach ko dc thay doi ban chat, tinh toan ven dl
+
+- Code need flexibility, adaptive for many dataset, many type data, format,..., all env, all systems... can change to adapt data requirement

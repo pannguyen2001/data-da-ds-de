@@ -35,7 +35,7 @@ logger.add(
     sys.stdout,
     colorize=True,
     level="DEBUG",
-    format="<level>{level.icon}</level><level> {level}</level> [<level>{extra[project]}</level>][<level>{extra[phase]}:{extra[sub_phase]}</level>][<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}",
+    format="<level>{level.icon}</level><level> {level}</level> [<level>{extra[project]}</level>][<level>{extra[phase]}:{extra[sub_phase]}</level>][<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}\n",
     backtrace=True,
     diagnose=True,
     )
@@ -45,7 +45,7 @@ logger.add(
     rotation="1 week",
     retention="1 month",
     level="DEBUG",
-    format="[{level}][{extra[project]}][{extra[phase]}:{extra[sub_phase]}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}",
+    format="[💡{level}][{extra[project]}][{extra[phase]}:{extra[sub_phase]}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}\n",
     backtrace=True,
     diagnose=True,
     mode="a"
