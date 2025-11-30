@@ -1,0 +1,14 @@
+pandas
+openpyxl
+python_calamine
+loguru
+snoop
+matplotlib
+snakeviz
+pathlib
+selenium
+lxml
+scrapy
+html5lib
+beautifulsoup4
+pytz
