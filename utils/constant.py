@@ -1,14 +1,11 @@
 import datetime
-import pandas as pd
-import numpy as np
-import os
 import sys
-import pytz
-from numpy.typing import ArrayLike, DTypeLike, NDArray
-from typing import Sequence, List, Dict, Tuple, Set, Any, Union, Optional, Annotated, Callable, Literal, TypeVar
+import sys
+import os
+from typing import  Dict, Any
 from loguru import logger
 
-error_message: Dict[str, any] = {
+error_message: Dict[str, Any] = {
     "check_mandatory": "[{} - Check mandatory] Required field.",
     "check_data_type": "[{} - Check data type] Data type must be '{}'.",
     "check_in_range_numeric": "[{} - Check in range numneric] Value must be in range [{}, {}].",
@@ -24,7 +21,11 @@ DATE_FORMAT: str = "%Y-%m-%d"
 DATETIME_FORMAT: str = "%Y-%m-%d HH:MM:SS"
 today: str = datetime.datetime.now().strftime(DATE_FORMAT)
 
-DATA_RAW_FOLDER_PATH: str = "/home/user/data-da-ds-de/data_test/raw"
+# Get origin directory
+origin_dir_path: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_RAW_FOLDER_PATH: str = f"{origin_dir_path}/data_test/raw"
+if not os.path.exists(DATA_RAW_FOLDER_PATH):
+    os.makedirs(DATA_RAW_FOLDER_PATH)
 FILE_PATH: str = f"{DATA_RAW_FOLDER_PATH}/sales_data_sample.xlsx"
 SHEET_NAME: str = "Sales_Data"
 "Data_Issues"
@@ -33,10 +34,14 @@ SHEET_NAME: str = "Sales_Data"
 # "Customer_Data"
 # "Sales_Data"
 
-REPORT_FOLDER_PATH: str = "/home/user/data-da-ds-de/reports"
+REPORT_FOLDER_PATH: str = f"{origin_dir_path}/reports"
 data_validation_report: str = f'{REPORT_FOLDER_PATH}/{today}.xlsx'
-LOG_FOLDER_PATH: str = "/home/user/data-da-ds-de/logs"
+if not os.path.exists(REPORT_FOLDER_PATH):
+    os.makedirs(REPORT_FOLDER_PATH)
+LOG_FOLDER_PATH: str = f"{origin_dir_path}/logs"
 log_file_path: str = f"{LOG_FOLDER_PATH}/{today}.log"
+if not os.path.exists(LOG_FOLDER_PATH):
+    os.makedirs(LOG_FOLDER_PATH)
 
 logger.remove()
 logger.add(
