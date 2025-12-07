@@ -24,8 +24,9 @@ def check_in_range_datetime(
     datetime_format: str = "%Y-%m-%d"
     ) -> pd.DataFrame:
     """Return error message if datetime value in cell is not in range, else no message. Ignore empty values."""
-    message: str = error_message["check_in_range_datetime"].format(column_name, range[0], range[1])
 
+    logger.info(f"Check in range datetime for column: {column_name}")
+    message: str = error_message["check_in_range_datetime"].format(column_name, range[0], range[1])
     sr_datetime: pd.Series = pd.to_datetime(df[column_name], errors="coerce", format=datetime_format)
     lower_range = pd.to_datetime(range[0], format=datetime_format)
     upper_range = pd.to_datetime(range[1], format=datetime_format)
@@ -33,10 +34,10 @@ def check_in_range_datetime(
         lower_range, upper_range = upper_range, lower_range
 
     empty_mask: pd.Series = is_empty(df[column_name])
-
     in_range_mask: pd.Series = is_in_range_datetime(df[column_name], range)
-
     mask: pd.Series = ~empty_mask & ~in_range_mask
 
     df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+    logger.success(f"Complete checking in range datetime for column: {column_name}")
+
     return df
