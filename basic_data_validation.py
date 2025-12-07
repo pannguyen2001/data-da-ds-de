@@ -74,6 +74,11 @@ if datetime_column_list:
     # # Now, in sample_sale_data.xlsx > Sales_Data, having column "Month" has type "string", but it is datetime string, format "%Y-%m", so check format here
     # check_correct_datetime_format(df, "Month", "%Y-%m")
 
+# Check string length
+if str_column_list:
+    for col in str_column_list:
+        check_in_range_string_length(df, col, (0,9))
+
 # ========== Data validation report ===========
 # Process before write report
 df["validation_result"] = df["validation_result"].map(lambda _: "\n".join(_))

@@ -57,5 +57,5 @@ def write_data_to_excel_file(
                 df= pd.DataFrame(data= data_input)
                 df.to_excel(writer, sheet_name=sheet_name, index=is_index_input, startrow= start_row, startcol= start_col)
 
-    logger.info(write_successfully_template.safe_substitute(sheet_name=sheet_name, file_out=file_out))
+    logger.success(write_successfully_template.safe_substitute(sheet_name=sheet_name, file_out=file_out))
     return True

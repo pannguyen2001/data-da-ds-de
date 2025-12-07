@@ -5,12 +5,13 @@ import os
 from typing import  Dict, Any
 from loguru import logger
 
-error_message: Dict[str, Any] = {
-    "check_mandatory": "[{} - Check mandatory] Required field.",
-    "check_data_type": "[{} - Check data type] Data type must be '{}'.",
-    "check_in_range_numeric": "[{} - Check in range numneric] Value must be in range [{}, {}].",
-    "check_correct_datetime_format": "[{} - Check correct datetime format] Value must be correct format: '{}'.",
-    "check_in_range_datetime": "[{} - Check in range datetime] Value must be in range [{}, {}].",
+error_message: Dict[str, any] = {
+    "check_mandatory": "[{}][Check mandatory] Required field.",
+    "check_data_type": "[{}][Check data type] Data type must be '{}'.",
+    "check_in_range_numeric": "[{}][Check in range numeric] Value must be in range [{}, {}].",
+    "check_correct_datetime_format": "[{}][Check correct datetime format] Value must be correct format: '{}'.",
+    "check_in_range_datetime": "[{}][Check in range datetime] Value must be in range [{}, {}].",
+    "check_in_range_string_length": "[{}][Check in range string length] Data length must be in range [{}, {}]."
 }
 
 def add_message_function(message: str = "") -> set:

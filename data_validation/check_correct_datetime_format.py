@@ -22,16 +22,18 @@ def is_correct_datetime_format(
 @logger.catch
 def check_correct_datetime_format(df: pd.DataFrame = None, column_name: str = "", datetime_format: str = "%Y-%m-%d") -> pd.DataFrame:
     """Return error message if cell value is incorrect datetime format else no message. Ignore empty value."""
+
+    logger.info(f"Check correct datetime format for column: {column_name}")
     message: str = error_message["check_correct_datetime_format"].format(column_name, datetime_format)
 
     empty_mask: pd.Series = is_empty(df[column_name])
-
     correct_format_mask: pd.Series = is_correct_datetime_format(df[column_name], datetime_format)
-
     # Invalid value is:
     # - Not empty
     # - Wrong input format
     mask: pd.Series = ~empty_mask & ~correct_format_mask
 
     df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+    logger.success(f"Complete checking correct datetime format for column: {column_name}")
+
     return df
