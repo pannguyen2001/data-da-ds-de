@@ -1,10 +1,21 @@
+'''
+Basic data validation
+From 2025-11-15
+Version 1
+Aim: learning
+Note:
+[Note data validation][Pan Nguyen][2025] https://yjpniq7uisce.jp.larksuite.com/docx/Mhf3dTr3Lofak0xpewzjChYSpJb
+'''
+
 import pandas as pd
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 from typing import Sequence, List, Dict, Tuple, Set, Any, Union, Optional, Annotated, Callable, Literal, TypeVar
 from loguru import logger
-from data_validation import *
-from helpers.write_data_to_excel_file import write_data_to_excel_file
+from helpers import *
 from utils.constant import *
+
+
+# ========== Validation for /home/user/data-da-ds-de/data_validation/data_test/raw/sales_data_sample.xlsx ==========
 
 # =========== Load data ==========
 df = pd.read_excel(FILE_PATH, SHEET_NAME)
@@ -66,6 +77,11 @@ if empty_checked_column_list:
 if number_column_list:
     for col in number_column_list:
         check_numeric(df, col)
+
+# check int type
+if int_column_list:
+    for col in int_column_list:
+        check_int(df, col)
 
 # check correct datetime format
 if datetime_column_list:
