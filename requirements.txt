@@ -12,3 +12,4 @@ scrapy
 html5lib
 beautifulsoup4
 pytz
+pydantic

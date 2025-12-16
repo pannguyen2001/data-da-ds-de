@@ -1,0 +1,429 @@
+25-11-05
+Before data validation, need read and IDA data (Initial data analyst) -> plan strategy for data validation and data processing:
+- convert dtype
+- fill value
+- outliner
+- format
+- split data
+- recalculate,...
+
+Validate data: need ensure: not change any raw data, not add or remove data in this phase, just validate and return result report for error data, summary report for error data, return dat chuan data quality for next phase: preporcessing/cleaning/...
+
+- Data preprocessing:xac thuc, dam bao tinh dung dan, toan ven dl, ko lm anh huong den chat luong dl, moi phuong thuc lm sach ko dc thay doi ban chat, tinh toan ven dl
+
+- Code need flexibility, adaptive for many dataset, many type data, format,..., all env, all systems... can change to adapt data requirement
+
+
+
+==================================
+2025-12-05
+Data validation strategy:
+First, from data dowloaded/ having, apply as much as possible
+Second, for my data of LHUB data migration project - Avepoint, validate base on data spec
+
+Ton chi:
+flexibility
+adaptive for many data
+widenable
+make a data validation workflow/tool as dbt or pandera
+
+Data validation practice
+
+2025-12-09
+create data test: valid and invalid value => validation => if export to excel validation report: transfer "validation_result" column to str, else keep as set => summarize result => analyze, print chart => export report => just ger valid data, or warning if not have any valid data => build chart/dashboard => export result as pdf or word => send email or save
+
+base on data lhub => write data validatio  => to wrapper and class/function/pattern => benchmark
+first, just run ok first
+
+
+
+column data validation:
+base on data type
+inner refer
+outer refer
+
+sheet validation
+
+preprocessing:
+convert_dtypes
+select_dtypes
+separators
+add_validation_result_column
+strip
+remove characters
+separators
+
+data type:
+number
+    is_numeric
+    common: in_range
+    int
+        is_int
+    float
+        is_float
+        decimal_format
+
+string
+
+    is_string
+    convert_number
+    in_lenght_range
+    string_format
+    in_value_list
+    mapping_value
+    enum_value
+    inner_refer
+    outer_refer
+    valid_uuid/onjectid
+    exist_sub_string
+    custom_check
+boolean
+    is_boolean
+    boolean_mapping
+date/datetime
+    is_date/datetime
+    correct_format
+    in_range
+category
+    is_category
+
+custom_check
+
+
+
+class property
+class Column:
+    name
+    is_required: True/False
+    is_nullable: True/False (if is_required = True, is_nullable = False as default)
+    is_fill_na: True/False
+    na_values: default: np.nan. str|list|float
+    na_action: default: "ignore"
+    error_action: default: "coerce"
+    value_list: default: None
+    default_value: default: np.nan
+    is_unique: True/False
+    format: default: None
+    dtype
+        if number:
+            range: default: 0 - 1_000_000
+            if float:
+                decimal_format: default: round .2f
+        if string:
+            range: default: 0 - 1_000_000
+            format: default: None
+            in_value_list: default: None
+            enum_value: default: None
+            inner_refer:
+                column_name:
+                    value_list: default: All(meaning all value in column), else input some specific values as array-like
+            outer_refer:
+                file_path: str or array like
+                sheet_name: str or array like, as order of file path to zip
+                column_name:
+                    value_list: default: All(meaning all value in column), else input some specific values as array-like. if combination, follow order of file path to zip
+            exist_sub_string
+        if boolean:
+            boolean_mapping: default: {
+                "true": True,
+                "false": False,
+                "": np.nan,
+            }
+        if date/datetime:
+            format: default: %Y-%m-%d
+            range: default: (1999-12-31, 2999-12-31)
+        if category:
+            ...
+    pre_processing_action:
+        check_na
+        separator
+    check_action:
+        check_mandatory
+        if not np.nan:
+            if numeric:
+                check_numeric
+                check_in_range_numeric
+                if int (specific):
+                    check_int
+                if float (specific):
+                    check_float
+            if string:
+                check_string
+                check_in_range_string_length
+                check_string_format
+                check_in_value_list
+                check_enum_value
+                check_inner_refer
+                check_outer_refer
+                check_mapping_value
+                check_exist_sub_string
+            if boolean:
+                check_boolean
+                check_mapping_boolean
+            if date/datetime:
+                check_date
+            if category:
+                check_category
+        count_dup
+        count_unique
+        count_null
+        fill_na
+
+class StringValidation
+    name: str = ""
+    range: default: 0 - 1_000_000
+    format: default: None
+    in_value_list: default: None
+    enum_value: default: None
+    inner_refer: default: None
+    outer_refer: default: None
+    exist_sub_string: default: None
+    mapping_value: default: None
+    other: ....
+
+class NumericValidation
+    name: str = ""
+    range: default: 0 - 1_000_000
+    decimal_format: default: round .2f
+    is_int: True/False
+    is_float: True/False
+
+if is_int:
+class IntValidation
+    name: str = ""
+    is_int
+if is_float:
+class FloatValidation
+    name: str = ""
+    is_float
+    format: default: .2f
+
+class DateValidation
+    name: str = ""
+    format: default: %Y-%m-%d
+    range: default: (1999-12-31, 2999-12-31)
+
+class BooleanValidation
+    name: str = ""
+    boolean_mapping: default: {
+        "true": True,
+        "false": False,
+        "": np.nan,
+    }
+
+class CategoryValidation
+    name: str = ""
+    ...
+
+ensure that:
+just validate, not change data raw
+need copy df before preprocessing and validate
+input: raw df
+output:
+report:
+    which data error
+    df data pass validate
+    summarize:
+        total pass/ total data
+        data pass ratio (%)
+        time processing (ms)
+        chart:
+            analyze columns error
+            error type
+            which error most
+            which column most
+    export to:
+        excel report
+        pdf report
+
+class Table:
+check_empty: df.isna()
+validate_config:
+    validate_column_names
+convert_dtypes
+select_dtypes
+add_validation_result_column
+is_exported: True/False
+export_report_file_path: str = ""
+export_report_name: str = ""
+export_type: word/pdf/excel
+config validation file:
+    Column, action
+
+common config:
+error message
+file_path
+logger
+
+auto detect datatype and select action check:
+select dtype: if int => int check, if float => float check, if string => string check,...
+
+config in excel file or json file?
+DataValidation().preporcessing_config({
+    "convert_dtypes": True,
+    "separator": [
+        "column_a": ":",
+        "column_b": "/"
+    ]
+}).config({
+    "column_a": StringValidation({
+        range: (0, 10),
+        mapping_value: {
+            "true": True,
+            "false": False,
+        },
+        enum_value: [1, 2, 3],
+    }),
+    "column_b": FloatValidation({
+        range: (0, 10),
+        decimal_format: ".2f",
+    })
+})
+
+or
+DataValidation().add(
+    Column(
+        name="column_a",
+        dtype="str",
+        range=(0, 10),
+        mapping_value={
+            "true": True,
+            "false": False,
+        },
+        enum_value=[1, 2, 3],
+    )
+).add(
+    Column(
+        name="column_b",
+        dtype="float",
+        range=(0, 10),
+        decimal_format=".2f",
+    )
+)
+
+or
+config.json:
+{
+    "column_a": {
+        "dtype": "str",
+        "range": [1, 2],
+    }
+}
+or config.excel/csv:
+file name: A
+sheet_name: a1
+column_name | dtype | range | mapping_value | enum_value | check action
+column_a | str | (1,10) | None | None
+anout check action, auto detect, if is_required == True => check_mandatory, if mapping_value != None => check mapping value, else raise error,...
+record to dict config for each column (to_dict(orient="records"))
+2 ways: Column base or DataType base
+
+run immediately:
+class A:
+    def __init__(self, prop):
+        self.__prop = prop
+
+    def run(self):
+        pass
+
+    def __call__(self):
+        self.run()
+A("a")() # a
+
+about specific validation:
+design:
+
+pd.Series.between()
+
+
+=> single validatiion class => strategy pattern
+claude ai : Strategy + Chain of Responsibility + Builder Pattern
+Gang of Four (1994) - Design Patterns
+
+Strategy Pattern (pg. 315-323)
+Chain of Responsibility (pg. 223-232)
+Most cited work in software design (60,000+ citations)
+
+
+Martin Fowler (2018) - Refactoring (2nd Edition)
+
+Compose Method, Replace Conditional with Polymorphism
+
+
+Robert C. Martin (2008) - Clean Code
+
+SOLID Principles, particularly Single Responsibility
+
+
+Python PEPs - Official Python Enhancement Proposals
+
+PEP 3119 - Abstract Base Classes
+PEP 318 - Decorators
+
+gemini: Strategy & Composite
+
+chatgpt:
+Composite Pattern + Strategy Pattern
+Chain of Responsibility
+Specification Pattern
+Factory Method or Abstract Factory
+
+Recommended Architecture: A Three-Layer Validation Framework
+
+This design is based on software architecture research including:
+
+Liskov Substitution Principle (LSP) & Open/Closed Principle (OCP) from SOLID — Robert C. Martin, 1996–2003.
+
+Plugin architecture patterns from Fowler — Patterns of Enterprise Application Architecture (2002).
+
+Pandas extension array / accessor design from McKinney — Python for Data Analysis (O’Reilly, 2017).
+
+Vectorized computation guidelines from Walt, Colbert & Varoquaux — The NumPy Array: A Structure for Efficient Numerical Computation (2011).
+
+===========================================
+
+Design pattern
+Seminal Research & Conference Papers
+While specific Q1-Q4 journal links are hard to guarantee without a dedicated academic search engine subscription, the following are foundational papers and highly-cited research that established or critically examined the field of design patterns.
+
+1. The Original Presentation of Design Patterns
+Name: Design Patterns: Abstraction and Reuse of Object-Oriented Design
+
+Authors: Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides
+
+Type/Venue: Conference Paper (European Conference on Object-Oriented Programming - ECOOP)
+
+Year: 1993
+
+Significance: This paper precedes the GoF book and first presented the concept and catalog of design patterns to the academic community.
+
+Link/Source: A publicly available PDF is often hosted on university computer science department websites (e.g., from UCSD CSE).
+
+2. Impact and Empirical Studies
+Name: Do Design Patterns Impact Software Quality Positively? (and subsequent award papers)
+
+Authors: Foutse Khomh, Yann-Gaël Guéhéneuc, et al.
+
+Type/Venue: Conference Paper (European Conference on Software Maintenance and Reengineering - CSMR/SANER)
+
+Year: 2008 (with 2018 Most Influential Paper award)
+
+Significance: A highly influential paper that empirically examines the relationship between using design patterns and software quality attributes.
+
+Link/Source: Often available on the authors' or university research group websites (e.g., SWAT Lab, Polytechnique Montréal).
+
+3. Alternative/Complementary Pattern Languages
+Name: GRASP (General Responsibility Assignment Software Patterns) Principles
+
+Author: Craig Larman
+
+Type/Venue: Book/Methodology (Primarily described in Applying UML and Patterns)
+
+Significance: Provides fundamental principles for assigning responsibilities to objects, which underlies many design patterns.
+
+🔗 Online Authoritative Resources
+While not books or papers, these sources act as highly structured and reliable catalogs that often cross-reference the original GoF work.
+
+Refactoring.Guru - Design Patterns: Provides clear explanations, UML diagrams , and code examples for the GoF patterns and others.
+
+Patterns.dev: Focuses on modern patterns for web application architecture using JavaScript/Node.js/React/Vue, connecting classical patterns to modern frameworks.
