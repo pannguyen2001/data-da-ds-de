@@ -25,7 +25,6 @@ df = pd.read_excel(FILE_PATH, SHEET_NAME)
 # IDA config
 logger.info(df.info())
 
-
 # Convert dtype to matches type
 df = df.convert_dtypes()
 
