@@ -96,7 +96,7 @@ if datetime_column_list:
     for col in datetime_column_list:
         check_correct_datetime_format(df, col, DATETIME_FORMAT)
     # # Now, in sample_sale_data.xlsx > Sales_Data, having column "Month" has type "string", but it is datetime string, format "%Y-%m", so check format here
-    # check_correct_datetime_format(df, "Month", "%Y-%m")
+    check_correct_datetime_format(df, "Month", "%Y-%m")
 
 # Check string length
 if str_column_list:
@@ -107,7 +107,7 @@ if str_column_list:
 # Summarize
 import datetime
 date = datetime.datetime.now().strftime("%Y-%m-%d")
-summarize_result(df, f"/home/user/data-da-ds-de/data_validation_pandas/reports/summarize_data_validation_report_{date}.xlsx", SHEET_NAME)
+summarize_result(df, f"./data_validation_pandas/reports/summarize_data_validation_report_{date}.xlsx", SHEET_NAME)
 
 # Process before write report
 if not df.empty:

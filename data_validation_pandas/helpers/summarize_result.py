@@ -1,4 +1,3 @@
-import datetime
 import pandas as pd
 import numpy as np
 from helpers.write_data_to_excel_file import write_data_to_excel_file
@@ -16,22 +15,27 @@ def summarize_result(df: pd.DataFrame, file_path: str, sheet_name: str) -> None:
         return
 
     total_row = df_summarize.shape[0]
-    df_summarize["Data samples"] = df_summarize[df_summarize.columns[0]] + " - Excel index: " + (df_summarize.index + 2).astype(str)
+    df_summarize["Data samples"] = f"{df_summarize.columns[0]}: " + df_summarize[df_summarize.columns[0]] + " - Excel index: " + (df_summarize.index + 2).astype(str)
 
     df_summarize = df_summarize.explode("validation_result")
     df_summarize = df_summarize.groupby("validation_result").agg({"Data samples": list}).reset_index()
 
-    df_summarize = df_summarize.rename({"validation_result": "Validation result"}, axis=1)
+    df_summarize = df_summarize.rename({"validation_result": "Error detail"}, axis=1)
 
     df_summarize["Amount"] = df_summarize["Data samples"].map(lambda x: len(x))
 
     df_summarize = df_summarize.sort_values(by=["Amount"], ascending=False).reset_index(drop=True)
 
-    df_summarize["Error percentage (%)"] = np.round(df_summarize["Amount"] / total_row, 4) * 100
+    df_summarize["Error percentage (%)"] = np.round(df_summarize["Amount"] / total_row * 100, 2)
 
-    df_summarize["Amount"] = df_summarize["Amount"].astype(str) + " / " + str(total_row)
+    df_summarize["Amount"] = df_summarize["Amount"].astype(str) + "/" + str(total_row)
 
     df_summarize["Data samples"] = df_summarize["Data samples"].map(lambda x: x[:5] if len(x) > 5 else x)
     df_summarize["Data samples"] = df_summarize["Data samples"].map(lambda x: "\n".join(x))
+
+    logger.info(f"Total errors: {df_summarize.shape[0]}.")
+    logger.info("Detail:")
+    for index, row in df_summarize.iterrows():
+        logger.info(f"{row['Error detail']} - {row['Amount']} - {row['Error percentage (%)']}%")
 
     write_data_to_excel_file(df_summarize, file_path, sheet_name)

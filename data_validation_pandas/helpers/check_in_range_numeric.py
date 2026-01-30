@@ -1,23 +1,22 @@
 import pandas as pd
-import numpy as np
 from typing import Tuple
-from loguru import logger
 from .is_empty import is_empty
-from utils.constant import error_message, add_message_function
+from utils.constant import error_message
+from .validation_wrapper import validation_wrapper
 
 # ---------- Check numeric range ----------
-@logger.catch
+@validation_wrapper
 def check_in_range_numeric(
     df: pd.DataFrame = None,
     column_name: str = "",
     input_range: Tuple[int | float, int | float] = (0, 0),
-) -> pd.DataFrame:
+) -> Tuple[pd.Series, str]:
     """Return error message if cell value is not in range, else no message. Ignore empty value ro not numeric values."""
 
-    logger.info(f"Check in range numeric for column: {column_name}")
+    message: str = error_message["check_in_range_numeric"].format(column_name, input_range[0], input_range[1])
+
     if input_range[0] > input_range[1]:
         input_range = (input_range[1], input_range[0])
-    message: str = error_message["check_in_range_numeric"].format(column_name, input_range[0], input_range[1])
 
     # values considered "empty"
     empty_mask: pd.Series = is_empty(df[column_name])
@@ -33,14 +32,4 @@ def check_in_range_numeric(
     #   - NOT in range
     invalid_mask = (~range_mask) & (~empty_mask) & (~non_numeric_mask)
 
-    if invalid_mask.any():
-        df.loc[invalid_mask, "validation_result"] = df.loc[invalid_mask, "validation_result"].map(add_message_function(message))
-        not_in_range_index: pd.Series = df.loc[invalid_mask, column_name].index + 2
-        sample_indexes: pd.Series = not_in_range_index[:5].tolist() if not_in_range_index.shape[0] > 5 else not_in_range_index.tolist()
-        logger.warning(f"[Out of range numeric] {len(invalid_mask)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
-    else:
-        logger.success("All values are in range numeric.")
-
-    # logger.success(f"Complete checking in range numeric for column: {column_name}.")
-
-    return df
+    return invalid_mask, message
