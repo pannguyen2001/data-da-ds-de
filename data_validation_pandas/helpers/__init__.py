@@ -8,6 +8,7 @@ from .check_numeric import check_numeric
 from .check_unique import check_unique
 from .is_empty import is_empty
 from .summarize_result import summarize_result
+from .validation_wrapper import validation_wrapper
 from .write_data_to_excel_file import write_data_to_excel_file
 
 __all__ = [
@@ -21,6 +22,7 @@ __all__ = [
     "check_unique",
     "is_empty",
     "summarize_result",
+    "validation_wrapper",
     "write_data_to_excel_file"
 ]
 

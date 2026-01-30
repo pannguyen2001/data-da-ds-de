@@ -1,8 +1,9 @@
 import pandas as pd
-import numpy as np
 from loguru import logger
+from typing import Tuple
 from .is_empty import is_empty
-from utils.constant import error_message, add_message_function
+from utils.constant import error_message
+from .validation_wrapper import validation_wrapper
 
 # ---------- Check is numeric ----------
 @logger.catch
@@ -10,26 +11,14 @@ def is_numeric(sr: pd.Series) -> pd.Series:
     """Return True if each value cell is numeric or False if not."""
     return pd.to_numeric(sr, errors="coerce").notna()
 
-@logger.catch
-def check_numeric(df: pd.DataFrame = None, column_name: str = "",
-    ) -> pd.DataFrame:
+@validation_wrapper
+def check_numeric(df: pd.DataFrame = None, column_name: str = "") -> Tuple[pd.Series, str]:
     """Return error message if value is not numeric else no message."""
 
-    logger.info(f"Check numeric for column: {column_name}")
     message: str = error_message["check_data_type"].format(column_name, "number")
 
     empty_check: pd.Series = is_empty(df[column_name])
     numeric_check: pd.Series = is_numeric(df[column_name])
     mask = ~empty_check & ~numeric_check
 
-    if mask.any():
-        df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
-        not_numeric_values: pd.Series = df.loc[mask, column_name].index + 2
-        sample_indexes: pd.Series = not_numeric_values[:5].tolist() if not_numeric_values.shape[0] > 5 else not_numeric_values.tolist()
-        logger.warning(f"[Not numeric] {len(not_numeric_values)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
-    else:
-        logger.info("All values are numeric.")
-
-    # logger.success(f"Complete checking numeric for column: {column_name}.")
-
-    return df
+    return mask, message
