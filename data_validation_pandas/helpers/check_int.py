@@ -24,7 +24,14 @@ def check_int(df: pd.DataFrame = None, column_name: str = "",
     int_check: pd.Series = is_int(df[column_name])
     mask = ~empty_check & ~int_check
 
-    df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
-    logger.success(f"Complete checking int for column: {column_name}")
+    if mask.any():
+        df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+        not_int_values: pd.Series = df.loc[mask, column_name].index + 2
+        sample_indexes: pd.Series = not_int_values[:5].tolist() if not_int_values.shape[0] > 5 else not_int_values.tolist()
+        logger.warning(f"[Not type int] {len(not_int_values)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
+    else:
+        logger.success("All values are int.")
+
+    # logger.success(f"Complete checking int for column: {column_name}.")
 
     return df

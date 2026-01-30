@@ -27,7 +27,14 @@ def check_correct_datetime_format(df: pd.DataFrame = None, column_name: str = ""
     # - Wrong input format
     mask: pd.Series = ~empty_mask & ~correct_format_mask
 
-    df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
-    logger.success(f"Complete checking correct datetime format for column: {column_name}")
+    if mask.any():
+        df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+        incorrect_format_index: pd.Series = df.loc[mask, column_name].index + 2
+        sample_indexes: pd.Series = incorrect_format_index[:5].tolist() if incorrect_format_index.shape[0] > 5 else incorrect_format_index.tolist()
+        logger.warning(f"[Incorrect datetime format '{datetime_format}'] {len(incorrect_format_index)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
+    else:
+        logger.success("All values are correct datetime format.")
+
+    # logger.success(f"Complete checking correct datetime format for column: {column_name}.")
 
     return df

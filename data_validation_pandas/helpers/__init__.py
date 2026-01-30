@@ -5,7 +5,9 @@ from .check_in_range_string_length import check_in_range_string_length
 from .check_int import check_int
 from .check_mandatory import check_mandatory
 from .check_numeric import check_numeric
+from .check_unique import check_unique
 from .is_empty import is_empty
+from .summarize_result import summarize_result
 from .write_data_to_excel_file import write_data_to_excel_file
 
 __all__ = [
@@ -16,7 +18,9 @@ __all__ = [
     "check_int",
     "check_mandatory",
     "check_numeric",
+    "check_unique",
     "is_empty",
+    "summarize_result",
     "write_data_to_excel_file"
 ]
 

@@ -30,7 +30,14 @@ def check_in_range_string_length(df: pd.DataFrame = None, column_name: str = "",
     not_in_range_mask: pd.Series = is_string_length_in_range(df[column_name], lower_range, upper_range)
     mask: pd.Series = ~empty_mask & ~not_in_range_mask
 
-    df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
-    logger.success(f"Complete checking in range string length for column: {column_name}")
+    if mask.any():
+        df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+        not_in_range_index: pd.Series = df.loc[mask, column_name].index + 2
+        sample_indexes: pd.Series = not_in_range_index[:5].tolist() if not_in_range_index.shape[0] > 5 else not_in_range_index.tolist()
+        logger.warning(f"[Out of range string length] {len(not_in_range_index)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
+    else:
+        logger.success("All values are in range.")
+
+    # logger.success(f"Complete checking in range string length for column: {column_name}.")
 
     return df
