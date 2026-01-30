@@ -15,7 +15,7 @@ def is_in_range_datetime(sr: pd.Series, range: Tuple[str, any]) -> pd.Series:
 def check_in_range_datetime(
     df: pd.DataFrame = None,
     column_name: str = "",
-    range: Tuple[str, any] = ("", ""),
+    range: Tuple[str, str] = ("", ""),
     datetime_format: str = "%Y-%m-%d"
     ) -> Tuple[pd.Series, str]:
     """Return True if datetime value in cell is not in range else False. Ignore empty values."""
