@@ -8,7 +8,7 @@ from .validation_wrapper import validation_wrapper
 
 @validation_wrapper
 def check_mandatory(df: pd.DataFrame = None, column_name: str = "", empty_value_list: List = None) -> Tuple[pd.Series, str]:
-    """Return error message if value cell is empty, else none."""
+    """Return True if value cell is empty else False."""
 
     message: str = error_message["check_mandatory"].format(column_name)
 

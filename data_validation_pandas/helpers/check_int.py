@@ -16,7 +16,7 @@ def is_int(sr: pd.Series) -> pd.Series:
 
 @validation_wrapper
 def check_int(df: pd.DataFrame = None, column_name: str = "") -> Tuple[pd.Series, str]:
-    """Return error message if value is not int else no message."""
+    """Return True if value is not int else False."""
 
     message: str = error_message["check_data_type"].format(column_name, "int")
 

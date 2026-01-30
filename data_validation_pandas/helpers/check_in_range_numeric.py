@@ -11,7 +11,7 @@ def check_in_range_numeric(
     column_name: str = "",
     input_range: Tuple[int | float, int | float] = (0, 0),
 ) -> Tuple[pd.Series, str]:
-    """Return error message if cell value is not in range, else no message. Ignore empty value ro not numeric values."""
+    """Return True if cell value is not in range else False. Ignore empty value ro not numeric values."""
 
     message: str = error_message["check_in_range_numeric"].format(column_name, input_range[0], input_range[1])
 

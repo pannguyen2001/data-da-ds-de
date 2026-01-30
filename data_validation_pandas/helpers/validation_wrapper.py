@@ -15,12 +15,13 @@ def validation_wrapper(validation_function: Callable[..., Tuple[pd.Series, str]]
         **kwargs
     ) -> pd.DataFrame:
         logger.info(f"Running validation rule: '{validation_function.__name__}' for column: '{column_name}'.")
+
         result, message = validation_function(
             df,
             column_name,
             *args,
             **kwargs
-            )
+        )
 
         if not result.any():
             logger.info("No issue found.")
