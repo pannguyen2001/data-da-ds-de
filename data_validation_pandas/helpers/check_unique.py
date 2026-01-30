@@ -13,9 +13,7 @@ def not_unique(series: pd.Series = None) -> pd.Series:
 
 @validation_wrapper
 def check_unique(df: pd.DataFrame, column_name: str) -> Tuple[pd.Series, str]:
-    """
-    Check if the column has unique values.
-    """
+    """Return True if value is not unique else False."""
     message: str = error_message["check_unique"].format(column_name)
 
     empty_check: pd.Series = is_empty(df[column_name])

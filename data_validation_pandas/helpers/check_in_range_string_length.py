@@ -15,7 +15,7 @@ def is_string_length_in_range(sr: pd.Series = None, lower_range: int = 0, upper_
 
 @validation_wrapper
 def check_in_range_string_length(df: pd.DataFrame = None, column_name: str = "", length_range=Tuple[int, int]) -> Tuple[pd.Series, str]:
-    """Return error message for each cell if string value is out of range, else none."""
+    """Return True if string value is out of range else False."""
 
     lower_range: int = length_range[0]
     upper_range: int = length_range[1]

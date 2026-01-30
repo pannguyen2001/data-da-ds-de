@@ -18,7 +18,7 @@ def check_in_range_datetime(
     range: Tuple[str, any] = ("", ""),
     datetime_format: str = "%Y-%m-%d"
     ) -> Tuple[pd.Series, str]:
-    """Return error message if datetime value in cell is not in range, else no message. Ignore empty values."""
+    """Return True if datetime value in cell is not in range else False. Ignore empty values."""
 
     message: str = error_message["check_in_range_datetime"].format(column_name, range[0], range[1])
 

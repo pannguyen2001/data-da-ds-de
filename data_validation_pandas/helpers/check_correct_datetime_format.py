@@ -16,7 +16,7 @@ def is_correct_datetime_format(
 
 @validation_wrapper
 def check_correct_datetime_format(df: pd.DataFrame = None, column_name: str = "", datetime_format: str = "%Y-%m-%d") -> Tuple[pd.Series, str]:
-    """Return error message if cell value is incorrect datetime format else no message. Ignore empty value."""
+    """Return True if cell value is incorrect datetime format else False. Ignore empty value."""
 
     message: str = error_message["check_correct_datetime_format"].format(column_name, datetime_format)
 

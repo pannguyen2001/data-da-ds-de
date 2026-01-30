@@ -13,7 +13,7 @@ def is_numeric(sr: pd.Series) -> pd.Series:
 
 @validation_wrapper
 def check_numeric(df: pd.DataFrame = None, column_name: str = "") -> Tuple[pd.Series, str]:
-    """Return error message if value is not numeric else no message."""
+    """Return True if value is not numeric else False."""
 
     message: str = error_message["check_data_type"].format(column_name, "number")
 
