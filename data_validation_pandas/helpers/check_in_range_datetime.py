@@ -32,7 +32,14 @@ def check_in_range_datetime(
     in_range_mask: pd.Series = is_in_range_datetime(df[column_name], range)
     mask: pd.Series = ~empty_mask & ~in_range_mask
 
-    df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
-    logger.success(f"Complete checking in range datetime for column: {column_name}")
+    if mask.any():
+        df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+        incorrect_format_index: pd.Series = df.loc[mask, column_name].index + 2
+        sample_indexes: pd.Series = incorrect_format_index[:5].tolist() if incorrect_format_index.shape[0] > 5 else incorrect_format_index.tolist()
+        logger.warning(f"[Out of range datetime] {len(incorrect_format_index)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
+    else:
+        logger.success("All values are in range datetime.")
+
+    # logger.success(f"Complete checking in range datetime for column: {column_name}.")
 
     return df

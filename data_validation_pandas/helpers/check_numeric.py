@@ -22,7 +22,14 @@ def check_numeric(df: pd.DataFrame = None, column_name: str = "",
     numeric_check: pd.Series = is_numeric(df[column_name])
     mask = ~empty_check & ~numeric_check
 
-    df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
-    logger.success(f"Complete checking numeric for column: {column_name}")
+    if mask.any():
+        df.loc[mask, "validation_result"] = df.loc[mask, "validation_result"].map(add_message_function(message))
+        not_numeric_values: pd.Series = df.loc[mask, column_name].index + 2
+        sample_indexes: pd.Series = not_numeric_values[:5].tolist() if not_numeric_values.shape[0] > 5 else not_numeric_values.tolist()
+        logger.warning(f"[Not numeric] {len(not_numeric_values)}/{df.shape[0]} values. Excel index example: {sample_indexes}.")
+    else:
+        logger.info("All values are numeric.")
+
+    # logger.success(f"Complete checking numeric for column: {column_name}.")
 
     return df

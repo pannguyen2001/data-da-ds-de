@@ -8,6 +8,7 @@ Note:
 '''
 
 import pandas as pd
+import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 from typing import Sequence, List, Dict, Tuple, Set, Any, Union, Optional, Annotated, Callable, Literal, TypeVar
 from loguru import logger
@@ -27,6 +28,9 @@ logger.info(df.info())
 
 # Convert dtype to matches type
 df = df.convert_dtypes()
+
+# unique column list
+unique_column_list: List = ["Order_ID"]
 
 # classify data by type
 # int type
@@ -66,6 +70,11 @@ df["validation_result"] = [set() for _ in range(df.shape[0])]
 # =========== Data validation ==========
 # The way validation data, processing or transforming is depended on data source we meet, no common method. All are based on data.
 
+# Check unique
+if unique_column_list:
+    for col in unique_column_list:
+        check_unique(df, col)
+
 # Group by data type and validation
 # Check empty
 if empty_checked_column_list:
@@ -95,19 +104,25 @@ if str_column_list:
         check_in_range_string_length(df, col, (0,9))
 
 # ========== Data validation report ===========
-# Process before write report
-df["validation_result"] = df["validation_result"].map(lambda _: "\n".join(_))
-excel_index: pd.Series = df.index + 2
-df.insert(0, "Excel_Index", excel_index)
-df_report: pd.DataFrame = df[df["validation_result"] != ""]
+# Summarize
+import datetime
+date = datetime.datetime.now().strftime("%Y-%m-%d")
+summarize_result(df, f"/home/user/data-da-ds-de/data_validation_pandas/reports/summarize_data_validation_report_{date}.xlsx", SHEET_NAME)
 
-# Write to report
-if df_report.empty:
-    logger.success("No data to report. Data has no issue.")
-else:
-    logger.info("Write to report")
-    write_data_to_excel_file(df_report, data_validation_report, SHEET_NAME)
-    logger.success("Data saved")
+# Process before write report
+if not df.empty:
+    df["validation_result"] = df["validation_result"].map(lambda _: "\n".join(_))
+    excel_index: pd.Series = df.index + 2
+    df.insert(0, "Excel_Index", excel_index)
+    df_report: pd.DataFrame = df[df["validation_result"] != ""]
+
+    # Write to report
+    if df_report.empty:
+        logger.success("No data to report. Data has no issue.")
+    else:
+        write_data_to_excel_file(df_report, data_validation_report, SHEET_NAME)
+
+logger.success("Complete data validation.")
 
 # ========== Preprocessing data ===========
 
