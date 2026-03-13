@@ -14,3 +14,7 @@ beautifulsoup4
 pytz
 pydantic
 polars
+# for polars
+fastexcel
+pyarrow
+fastparquet

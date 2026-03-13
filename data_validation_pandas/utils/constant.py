@@ -12,7 +12,9 @@ error_message: Dict[str, any] = {
     "check_correct_datetime_format": "[{}][Check correct datetime format] Value must be correct format: '{}'.",
     "check_in_range_datetime": "[{}][Check in range datetime] Value must be in range [{}, {}].",
     "check_in_range_string_length": "[{}][Check in range string length] Data length must be in range [{}, {}].",
-    "check_unique": "[{}][Check unique] Value is duplicated."
+    "check_unique": "[{}][Check unique] Value is duplicated.",
+    "check_in_value_list": "[{}][Check in value list] Value must be in value list: {}.",
+    "check_incorrect_reference": "[{}][Check incorrect reference] Value must be in correct reference list: {}."
 }
 
 def add_message_function(message: str = "") -> set:

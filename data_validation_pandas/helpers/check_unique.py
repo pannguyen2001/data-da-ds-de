@@ -16,6 +16,10 @@ def check_unique(df: pd.DataFrame, column_name: str) -> Tuple[pd.Series, str]:
     """Return True if value is not unique else False."""
     message: str = error_message["check_unique"].format(column_name)
 
+    # if df is None or df.empty:
+    #     logger.error("Dataframe is empty or having error.")
+        # return df
+
     empty_check: pd.Series = is_empty(df[column_name])
     unique_check: pd.Series = not_unique(df[column_name])
     mask = ~empty_check & unique_check
