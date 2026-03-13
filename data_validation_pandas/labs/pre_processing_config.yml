@@ -1,0 +1,65 @@
+files:
+# File 1: InternalSuspendedList
+- sheet_name: InternalSuspendedList
+  file_path: ${DATA_FOLDER_PATH}/InternalSuspendedList.parquet
+  file_type: parquet
+  report_file_path: ${DATA_FOLDER_PATH}/InternalSuspendedList_report.xlsx
+
+  columns:
+    - name: ID
+      data_type: string
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+
+    - name: Debtor type
+      data_type: string
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+        - type: title_case
+
+    - name: NRIC/FIN
+      data_type: string
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+
+    - name: Suspended reason
+      data_type: string
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+
+    - name: Effective from
+      data_type: date
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+
+    - name: Bad debt write-off amount
+      data_type: float
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+
+    - name: Status
+      data_type: string
+      rules:
+        - type: remove_whitespace
+        - type: fill_na
+          values: np.nan
+        - type: splited_by_separator # Example
+          separator: "#;"
+        - type: title_case
+        - type: mapping_enum # Example
+          mapping:
+            Active: "Active"
+            Inactive: "Inactive"
+        - type: remove_duplicates # example, not use in Lhub Prject validation
