@@ -34,11 +34,11 @@ def write_data_to_excel_file(
 
     if not is_file_exist:
         logger.info("Write data to new file.")
-        df= pd.DataFrame(data= data_input)
+        df = pd.DataFrame(data=data_input)
         df.to_excel(file_out, sheet_name=sheet_name , index=is_index_input)
     else:
-        df = pd.ExcelFile(file_out)
-        if sheet_name in df.sheet_names:
+        sheet_names = pd.ExcelFile(file_out).sheet_names
+        if sheet_name in sheet_names:
             logger.info(f"Write data to existing sheet {sheet_name}.")
 
             if mode == 'w':
