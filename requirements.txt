@@ -1,20 +1,32 @@
+# process data
 pandas
 openpyxl
 python_calamine
+polars
+fastexcel
+pyarrow
+fastparquet
+
+# logging and debugging
 loguru
 snoop
-matplotlib
 snakeviz
-pathlib
+
+# visualize data
+matplotlib
+
+# craw db
 selenium
 lxml
 scrapy
 html5lib
 beautifulsoup4
+
+# other
+pathlib
 pytz
+python-dotenv
 pydantic
-polars
-# for polars
-fastexcel
-pyarrow
-fastparquet
+
+# test
+pytest
