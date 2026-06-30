@@ -1,0 +1,1 @@
+# Storage small stateless functions
