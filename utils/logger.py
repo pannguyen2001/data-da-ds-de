@@ -20,13 +20,13 @@ Can sort, filter, pagination by datetime, level, data pipeline phase, sub phase
 
 log_file = Path(f"./logs/{date_today}.log")
 if not log_file.parent.exists():
-    Path.mkdir(log_file, exist_ok=True, parents=True)
+    Path.mkdir("./logs", exist_ok=True, parents=True)
     log_file.touch()
 
 # Debug
 error_log_file = Path(f"./logs/error/{date_today}.log")
 if not error_log_file.parent.exists():
-    error_log_file.parent.mkdir(exist_ok=True, parents=True)
+    error_log_file.parent.mkdir("./logs/error",exist_ok=True, parents=True)
     error_log_file.touch()
 
 # === Configure Loguru ===
