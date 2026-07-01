@@ -22,4 +22,6 @@ dependencies = [
     "polars>=1.42.1",
     "pytest>=9.1.1",
     "python-dotenv>=1.2.2",
+    "pydantic>=2.13.4",
+    "pandera>=0.32.1",
 ]

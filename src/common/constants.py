@@ -1,18 +1,18 @@
-import os
 import datetime
-import pytz
-from pathlib import Path
+import os
 from enum import StrEnum, auto
-from dotenv import load_dotenv
+from pathlib import Path
 
+import pytz
+from dotenv import load_dotenv
 
 # ========== Load environment variables from .env file ==========
 load_dotenv()
 # Access environment variables
-PROJECT_NAME = os.getenv('PROJECT_NAME')
-DB_URL = os.getenv('DB_URL')
-API_KEY = os.getenv('API_KEY')
-DEBUG_MODE = os.getenv('DEBUG')
+PROJECT_NAME = os.getenv("PROJECT_NAME")
+DB_URL = os.getenv("DB_URL")
+API_KEY = os.getenv("API_KEY")
+DEBUG_MODE = os.getenv("DEBUG")
 KAGGLE_USERNAME = os.getenv("KAGGLE_USERNAME")
 KAGGLE_KEY = os.getenv("KAGGLE_KEY")
 
@@ -53,3 +53,13 @@ class LoggerLevels(StrEnum):
     CRITICAL = "CRITICAL"
     DEBUG = "DEBUG"
     TRACE = "TRACE"
+
+
+class ReaderStatus(StrEnum):
+    PASS = auto()
+    FAIL = auto()
+
+class PipelineStatus(StrEnum)
+    PENDING = auto()
+    ERROR = auto()
+    SKIP = auto()
