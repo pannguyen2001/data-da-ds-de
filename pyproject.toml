@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "pandas",
     "openpyxl",
-    "python_calamine",
+    "python-calamine",
     "loguru",
     "snoop",
     "matplotlib",
@@ -17,5 +17,11 @@ dependencies = [
     "scrapy",
     "html5lib",
     "beautifulsoup4",
-    "pytz"
+    "pytz",
+    "fastexcel>=0.20.2",
+    "polars>=1.42.1",
+    "pytest>=9.1.1",
+    "python-dotenv>=1.2.2",
+    "pydantic>=2.13.4",
+    "pandera>=0.32.1",
 ]
