@@ -1,9 +1,7 @@
 import sqlite3
-from loguru import logger
-# from .logger import logger_wrapper
-from .logger import other_common_logger
+from .logger import other_common_logger as logger
 
-@other_common_logger.catch
+@logger.catch
 def connect_db(db_file_path: str = ""):
     """
     Connect to the SQLite database.
@@ -22,14 +20,14 @@ def connect_db(db_file_path: str = ""):
     # Start a transaction
     cursor.execute("BEGIN;")
 
-    other_common_logger.info(f"Database created and connected successfully!")
+    logger.info("Database created and connected successfully!")
     return connection, cursor
 
-@other_common_logger.catch
+@logger.catch
 def close_db(connection: sqlite3.Connection):
     """
     Close db connection
     """
     connection.close()
-    other_common_logger.info(f"Database closed successfully!")
+    logger.info("Database closed successfully!")
     return True

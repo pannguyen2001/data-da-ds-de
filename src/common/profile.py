@@ -6,11 +6,10 @@ import io
 from functools import wraps
 from pathlib import Path
 from typing import Callable
-from .logger import common_phase_logger
-# from .logger import logger_wrapper
+from common.logger import logger
+
 
 today = datetime.datetime.now().strftime("%Y-%m-%d")
-profile_logger = common_phase_logger.bind(sub_phase="PROFILE")
 
 def profile(func: Callable):
     """
@@ -21,7 +20,7 @@ def profile(func: Callable):
         output_file (str, optional): _description_. Defaults to log_path.
     """
     def decorator(f):
-        @profile_logger.catch
+        @logger.catch
         @wraps(f)
         def wrapper(*args, **kwargs):
             # Create and start profiler
@@ -38,17 +37,17 @@ def profile(func: Callable):
             s = io.StringIO()
             ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
             ps.print_stats(20)
-            profile_logger(s.getvalue())
+            logger.info(s.getvalue())
 
             # Save to file if requested
             log_file = f"{today}_{f.__name__}.prf"
-            log_folder = f"./profile"
+            log_folder = "./profile"
             log_path = os.path.join(log_folder, log_file)
             output_file = Path(log_path)
             output_file.parent.mkdir(exist_ok=True, parents=True)
 
             ps.dump_stats(output_file)
-            profile_logger.info(f"Profile data saved to {output_file}")
+            logger.info(f"Profile data saved to {output_file}")
 
             return result
         return wrapper
