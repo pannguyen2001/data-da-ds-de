@@ -1,5 +1,5 @@
 from pathlib import Path
-from utils.logger import other_common_logger
+from common.logger import logger
 
 def create_io_entry(folder_path: str = "", file_name: str = "") -> Path:
     """
@@ -21,10 +21,10 @@ def create_io_entry(folder_path: str = "", file_name: str = "") -> Path:
         # Case 1: Folder only (file_name is empty)
         if not file_name:
             if base_path.exists():
-                other_common_logger.warning(f"Folder already exists: {base_path}")
+                logger.warning(f"Folder already exists: {base_path}")
             else:
                 base_path.mkdir(parents=True, exist_ok=True)
-                other_common_logger.success(f"Folder created: {base_path}")
+                logger.success(f"Folder created: {base_path}")
             return base_path
 
         # Case 2: File inside a folder
@@ -34,13 +34,13 @@ def create_io_entry(folder_path: str = "", file_name: str = "") -> Path:
         file_path.parent.mkdir(parents=True, exist_ok=True)
 
         if file_path.exists():
-            other_common_logger.warning(f"File already exists: {file_path}")
+            logger.warning(f"File already exists: {file_path}")
         else:
             file_path.touch()
-            other_common_logger.success(f"File created: {file_path}")
+            logger.success(f"File created: {file_path}")
 
         return file_path
 
     except Exception as e:
-        other_common_logger.error(f"Error processing creation: {e}")
+        logger.error(f"Error processing creation: {e}")
         raise

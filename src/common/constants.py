@@ -13,6 +13,8 @@ PROJECT_NAME = os.getenv('PROJECT_NAME')
 DB_URL = os.getenv('DB_URL')
 API_KEY = os.getenv('API_KEY')
 DEBUG_MODE = os.getenv('DEBUG')
+KAGGLE_USERNAME = os.getenv("KAGGLE_USERNAME")
+KAGGLE_KEY = os.getenv("KAGGLE_KEY")
 
 # ========== Timezone config ==========
 local_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
