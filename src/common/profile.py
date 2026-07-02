@@ -6,7 +6,7 @@ import io
 from functools import wraps
 from pathlib import Path
 from typing import Callable
-from common.logger import logger
+from src.common.logger import logger
 
 
 today = datetime.datetime.now().strftime("%Y-%m-%d")

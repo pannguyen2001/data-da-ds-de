@@ -1,7 +1,7 @@
 from functools import wraps
 from typing import Callable, Optional, ParamSpec, TypeVar,  overload
 import time
-from common.logger import logger
+from src.common.logger import logger
 
 P = ParamSpec("P")
 R = TypeVar("R")

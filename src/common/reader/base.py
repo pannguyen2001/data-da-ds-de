@@ -1,24 +1,23 @@
 import datetime
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Union
 
 import polars as pl
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from common.logger import logger
-from models.reader_config import ReaderConfig
-from src.common.constants import ReaderStatus
+from src.common.logger import logger
+from src.models.config.file_config import FileConfig
+from src.common.constants import OperationStatus
 from src.models.metadata import MetaData
-from src.models.reader_result import ReaderResult
+from src.models.result.reader_result import ReaderResult
 
 
 @dataclass
 class FileReader(ABC):
     """Base class for file reader strategies."""
 
-    config: ReaderConfig = Field(default_factory=ReaderConfig)
+    config: FileConfig = Field(default_factory=FileConfig)
 
     def validate(self, file_path: Path) -> None:
         """Validate that the target file exists."""
@@ -34,8 +33,9 @@ class FileReader(ABC):
         pass
 
     @abstractmethod
-    def _do_load(self) -> Union[pl.DataFrame, pl.LazyFrame]:
+    def _do_load(self) -> pl.LazyFrame:
         """Subclasses must implement this method to handle specific file parsing."""
+
         pass
 
     def load(self) -> ReaderResult:
@@ -57,7 +57,7 @@ class FileReader(ABC):
                 source=self.config.file_path,
                 col_count=None,
                 data_schema=None,
-                status=ReaderStatus.FAIL,
+                status=OperationStatus.FAIL,
                 metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
             )
         else:
@@ -67,8 +67,8 @@ class FileReader(ABC):
                 col_count=df.shape[1]
                 if isinstance(df, pl.DataFrame)
                 else len(df.collect_schema()),
-                data_schema=df.collect_schema(),
-                status=ReaderStatus.PASS,
+                data_schema=df.schema if isinstance(df, pl.DataFrame) else df.collect_schema(),
+                status=OperationStatus.PASS,
                 metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
             )
 

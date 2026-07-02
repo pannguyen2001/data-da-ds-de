@@ -1,6 +1,6 @@
 import datetime
 import os
-from enum import StrEnum, auto
+from enum import StrEnum, auto, Enum
 from pathlib import Path
 
 import pytz
@@ -26,7 +26,9 @@ date_today = datetime.datetime.now().strftime(date_format)
 project_root = Path(__file__).parent.resolve()
 
 
-# ========== Data pipeline phase ==========
+# ====================
+# Enums
+# ====================
 class DataPipelineActivities(StrEnum):
     COLLECTION = auto()
     INGESTION = auto()
@@ -44,7 +46,6 @@ class DataPipelineActivities(StrEnum):
     LOGGING = auto()
     COMMON = auto()
 
-
 class LoggerLevels(StrEnum):
     INFO = "INFO"
     SUCCESS = "SUCCESS"
@@ -54,12 +55,50 @@ class LoggerLevels(StrEnum):
     DEBUG = "DEBUG"
     TRACE = "TRACE"
 
+class FileType(StrEnum):
+    CSV = auto()
+    JSON = auto()
+    PARQUET = auto()
+    XLSX = auto()
+    XLS = auto()
+    YAML = auto()
+    YML = auto()
+    DB = auto()
 
-class ReaderStatus(StrEnum):
+class ResolveFileType(StrEnum):
+    CSV = auto()
+    JSON = auto()
+    PARQUET = auto()
+    EXCEL = auto()
+    YAML = auto()
+    SQL = auto()
+
+class OperationStatus(StrEnum):
     PASS = auto()
     FAIL = auto()
+    SKIP = auto()
 
-class PipelineStatus(StrEnum)
+class PipelineStatus(StrEnum):
     PENDING = auto()
     ERROR = auto()
     SKIP = auto()
+
+class SourceType(StrEnum):
+    FILE = auto()
+    API = auto()
+    DATABASE = auto()
+    WEB = auto()
+
+class DbEngine(StrEnum):
+    SQLITE = auto()
+    POSTGRESQL = auto()
+    MYSQL = auto()
+    MONGODB = auto()
+    DUCKDB = auto()
+
+class ApiMethod(StrEnum, Enum):
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    PATCH = "PATCH"
+    DELETE = "DELETE"

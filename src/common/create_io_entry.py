@@ -1,5 +1,5 @@
 from pathlib import Path
-from common.logger import logger
+from src.common.logger import logger
 
 def create_io_entry(folder_path: str = "", file_name: str = "") -> Path:
     """
