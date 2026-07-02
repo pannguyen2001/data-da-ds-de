@@ -4,12 +4,14 @@ import traceback
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Literal
+from typing import Any, Literal
 
 from pydantic import ConfigDict, Field
 from pydantic.dataclasses import dataclass
 import polars as pl
 
 from src.common.constants import OperationStatus
+from src.common.logger import logger
 from src.common.logger import logger
 from src.models.metadata import MetaData
 from src.models.result.storage_result import StorageResult
@@ -34,6 +36,7 @@ class Storage(ABC):
             raise ValueError(f"[{self.__class__.__name__}] No data to storage.")
 
         if self.des_file_path.is_dir():
+            raise ValueError(f"{self.des_file_path} is a directory.")
             raise ValueError(f"{self.des_file_path} is a directory.")
 
     @abstractmethod

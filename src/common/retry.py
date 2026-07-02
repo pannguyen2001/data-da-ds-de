@@ -1,6 +1,7 @@
-from functools import wraps
-from typing import Callable, Optional, ParamSpec, TypeVar,  overload
 import time
+from functools import wraps
+from typing import Callable, Optional, ParamSpec, TypeVar, overload
+
 from src.common.logger import logger
 
 P = ParamSpec("P")
@@ -56,9 +57,9 @@ def retry(
 
                     if attempt == times:
                         logger.exception(
-                        "[%s] All retry attempts failed.",
-                        function.__name__,
-                    )
+                            "[%s] All retry attempts failed.",
+                            function.__name__,
+                        )
                         raise
 
                     time.sleep(delay)
@@ -69,7 +70,6 @@ def retry(
         return decorator(func)
 
     return decorator
-
 
 
 # # Complex version: kimi:

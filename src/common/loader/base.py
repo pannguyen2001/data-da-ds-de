@@ -4,6 +4,7 @@ import traceback
 import datetime
 import os
 
+from pydantic import Field
 from pydantic.dataclasses import dataclass
 
 from src.common.logger import logger

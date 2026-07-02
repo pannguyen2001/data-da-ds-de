@@ -1,21 +1,22 @@
+import polars as pl
 import psycopg2
 from pydantic.dataclasses import dataclass
 
-import polars as pl
+from src.common.logger import logger
 
 from .base import DatabaseConnector
-from src.common.logger import logger
 
 
 @dataclass
 class PostgresqlConnector(DatabaseConnector):
-
     def connect(self) -> None:
-        logger.info(f"[{self.__class__.__name__}] Connect to '{self.config.engine}' database: {self.config.connection_info.database}.")
+        logger.info(
+            f"[{self.__class__.__name__}] Connect to '{self.config.engine}' database: {self.config.connection_info.database}."
+        )
 
         self.conn = psycopg2.connect(
             **self.config.connection_info.model_dump(exclude_none=True),
-            **self.config.options
+            **self.config.options,
         )
         logger.success(f"[{self.__class__.__name__}] Connect database successfully.")
 

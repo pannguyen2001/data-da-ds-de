@@ -7,9 +7,9 @@ import polars as pl
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
+from src.common.constants import OperationStatus
 from src.common.logger import logger
 from src.models.config.file_config import FileConfig
-from src.common.constants import OperationStatus
 from src.models.metadata import MetaData
 from src.models.result.reader_result import ReaderResult
 

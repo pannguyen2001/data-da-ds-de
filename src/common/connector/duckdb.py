@@ -2,17 +2,20 @@ import duckdb
 import polars as pl
 from pydantic.dataclasses import dataclass
 
-from .base import DatabaseConnector
 from src.common.logger import logger
+
+from .base import DatabaseConnector
 
 
 @dataclass
 class DuckDbConnector(DatabaseConnector):
-
     def connect(self) -> None:
-        logger.info(f"[{self.__class__.__name__}] Connect to '{self.config.engine}' database: {self.config.connection_info.database}.")
+        logger.info(
+            f"[{self.__class__.__name__}] Connect to '{self.config.engine}' database: {self.config.connection_info.database}."
+        )
         self.conn = duckdb.connect(
-            **self.config.connection_info.model_dump(exclude_none=True), **self.config.options
+            **self.config.connection_info.model_dump(exclude_none=True),
+            **self.config.options,
         )
         logger.success(f"[{self.__class__.__name__}] Connect database successfully.")
 

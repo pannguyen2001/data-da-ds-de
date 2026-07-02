@@ -1,18 +1,21 @@
 from copy import deepcopy
-from pymongo import MongoClient
-import polars as pl
 from typing import Any
+
+import polars as pl
 from pydantic.dataclasses import dataclass
+from pymongo import MongoClient
+
+from src.common.logger import logger
 
 from .base import DatabaseConnector
-from src.common.logger import logger
 
 
 @dataclass
 class MongoDbConnector(DatabaseConnector):
-
     def connect(self) -> None:
-        logger.info(f"[{self.__class__.__name__}] Connect to '{self.config.engine}' database: {self.config.connection_info.database}.")
+        logger.info(
+            f"[{self.__class__.__name__}] Connect to '{self.config.engine}' database: {self.config.connection_info.database}."
+        )
 
         cfg = self.config.connection_info
         options = deepcopy(self.config.options)
@@ -23,7 +26,7 @@ class MongoDbConnector(DatabaseConnector):
             port=cfg.port,
             username=cfg.username,
             password=cfg.password,
-            **self.config.options
+            **self.config.options,
         )
         self.db = self.conn[cfg.database]
 

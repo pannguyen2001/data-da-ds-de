@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
+<<<<<<< Updated upstream
 from pydantic.dataclasses import dataclass
+=======
+>>>>>>> Stashed changes
 from typing import Any
 
 import polars as pl
+from pydantic.dataclasses import dataclass
 
 from src.models.config.db_connector_config import DbConfig
 from src.common.logger import logger
@@ -10,7 +14,6 @@ from src.common.logger import logger
 
 @dataclass
 class DatabaseConnector(ABC):
-
     config: DbConfig
     conn: Any | None = None
     cur: Any | None = None

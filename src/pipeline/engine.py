@@ -1,6 +1,4 @@
-from pydantic.dataclasses import dataclass
 from pathlib import Path
-from pydantic import Field
 from typing import Any
 from python_calamine import CalamineWorkbook
 
@@ -32,12 +30,20 @@ from src.models.config.download_config import DownloadConfig
 
 from src.common.logger import logger
 from src.common.config import (
-    staging_data_folder,
     brozen_data_folder,
-    silver_data_folder,
     golden_data_folder,
+    silver_data_folder,
+    staging_data_folder,
     test_data_folder,
 )
+from src.common.connector.base import DatabaseConnector
+from src.common.connector.registry import _DB_CONNECTORS
+from src.common.constants import DbEngine, ResolveFileType, SourceType
+from src.common.detect_file_type import detect_file_type
+from src.common.loader.registry import _LOADERS
+from src.common.logger import logger
+from src.common.reader.base import FileReader
+from src.common.reader.registry import _READERS
 from src.common.storage.registry import _STORAGES
 from src.models.result.download_result import DownloadResult
 from src.models.result.reader_result import ReaderResult
@@ -94,6 +100,7 @@ class PipelineEngine:
             optimize
 
     """
+
 
     setup: dict[str, Any] = Field(default_factory=dict)
     source_configs: list[SourceConfig] = Field(default_factory=list)

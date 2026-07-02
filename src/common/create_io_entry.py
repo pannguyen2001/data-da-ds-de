@@ -1,5 +1,7 @@
 from pathlib import Path
+
 from src.common.logger import logger
+
 
 def create_io_entry(folder_path: str = "", file_name: str = "") -> Path:
     """
@@ -12,6 +14,7 @@ def create_io_entry(folder_path: str = "", file_name: str = "") -> Path:
     Returns:
         Path: The path to the created folder or file.
     """
+
     try:
         if not folder_path:
             raise ValueError("folder_path is required.")

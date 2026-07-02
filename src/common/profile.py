@@ -1,15 +1,16 @@
-import os
-import datetime
 import cProfile
-import pstats
+import datetime
 import io
+import os
+import pstats
 from functools import wraps
 from pathlib import Path
 from typing import Callable
+
 from src.common.logger import logger
 
-
 today = datetime.datetime.now().strftime("%Y-%m-%d")
+
 
 def profile(func: Callable):
     """
@@ -19,6 +20,7 @@ def profile(func: Callable):
         func (Callable): _description_
         output_file (str, optional): _description_. Defaults to log_path.
     """
+
     def decorator(f):
         @logger.catch
         @wraps(f)
@@ -35,7 +37,7 @@ def profile(func: Callable):
 
             # Print formatted results to console
             s = io.StringIO()
-            ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
+            ps = pstats.Stats(pr, stream=s).sort_stats("cumulative")
             ps.print_stats(20)
             logger.info(s.getvalue())
 
@@ -50,11 +52,13 @@ def profile(func: Callable):
             logger.info(f"Profile data saved to {output_file}")
 
             return result
+
         return wrapper
 
     # Handle both @profile and @profile(output_file='stats.prof') syntax
     if func is None:
         return decorator
     return decorator(func)
+
 
 # run file .prof: install snakeviz or tuna, and run snakeviz/tuna file.prof
