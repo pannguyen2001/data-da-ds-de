@@ -24,12 +24,12 @@ if not error_log_file.parent.exists():
 
 # ===== Set log level =====
 logger.remove()
-logger.level(name=LoggerLevels.DEBUG, color='<blue><bold>', icon='🔍')
-logger.level(name=LoggerLevels.INFO, color='<green><bold>', icon='💡')
-logger.level(name=LoggerLevels.SUCCESS, color='<cyan><bold>', icon='😀')
-logger.level(name=LoggerLevels.WARNING, color='<yellow><bold>', icon='❕')
-logger.level(name=LoggerLevels.ERROR, color='<red><bold>', icon='❌')
-logger.level(name=LoggerLevels.CRITICAL, color='<white><bold>', icon='🚫')
+logger.level(name=LoggerLevels.DEBUG.value, color='<blue><bold>', icon='🔍')
+logger.level(name=LoggerLevels.INFO.value, color='<green><bold>', icon='💡')
+logger.level(name=LoggerLevels.SUCCESS.value, color='<cyan><bold>', icon='😀')
+logger.level(name=LoggerLevels.WARNING.value, color='<yellow><bold>', icon='❕')
+logger.level(name=LoggerLevels.ERROR.value, color='<red><bold>', icon='❌')
+logger.level(name=LoggerLevels.CRITICAL.value, color='<white><bold>', icon='🚫')
 
 
 # ===== Add loggers =====
@@ -37,7 +37,7 @@ logger.add(
     sys.stdout,
     colorize=True,
     level="DEBUG",
-    format="<level>{level.icon}</level><level> {level}</level> [<level>{extra[project]}</level>][<level>{extra[phase]}:{extra[sub_phase]}</level>][<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}\n",
+    format="<level>{level.icon}</level><level> {level}</level> [<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}\n",
     backtrace=True,
     diagnose=True,
     enqueue=True, # mutiple thread/processing
@@ -48,7 +48,7 @@ logger.add(
     rotation="1 week",
     retention="1 month",
     level="DEBUG",
-    format="[💡{level}][{extra[project]}][{extra[phase]}:{extra[sub_phase]}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}\n",
+    format="[💡{level}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}\n",
     backtrace=True,
     diagnose=True,
     mode="a",
@@ -62,16 +62,13 @@ logger.add(
     rotation="1 week",
     retention="1 month",
     level="WARNING",
-    format="[{level}][{extra[project]}][{extra[phase]}:{extra[sub_phase]}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}",
+    format="[{level}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}",
     backtrace=True,
     diagnose=True,
     mode="w",
     enqueue=True,
     # serialize=True,
 )
-
-logger = logger.bind(project=PROJECT_NAME)
-
 
 
 

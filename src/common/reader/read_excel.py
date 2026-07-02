@@ -4,10 +4,10 @@ from typing import List, Union
 import polars as pl
 from python_calamine import CalamineWorkbook
 
-from common.strategies.reader.base import FileReader
+from src.common.reader.base import FileReader
 
 
-class ReadExcelFileStrategy(FileReader):
+class ExcelReader(FileReader):
     def validate(self, file_path: Path) -> None:
         super().validate(self.config.file_path)
 
@@ -33,7 +33,7 @@ class ReadExcelFileStrategy(FileReader):
                 f"[{self.__class__.__name__}] '{', '.join(invalid_cols)}' does not exist in sheet '{sheet}', file '{str(self.config.file_path)}'. Existing columns: {', '.join(cols)}."
             )
 
-    def _do_load(self) -> pl.DataFrame:
+    def _do_load(self) -> pl.LazyFrame:
         """
         Common settings:
             sheet_name=sheet_names,
@@ -42,4 +42,4 @@ class ReadExcelFileStrategy(FileReader):
             infer_schema_length=0,
         """
 
-        return pl.read_excel(self.config.file_path, **self.config.options)
+        return pl.read_excel(self.config.file_path, **self.config.options).lazy()

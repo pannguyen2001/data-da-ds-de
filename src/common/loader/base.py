@@ -2,28 +2,27 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from pydantic import Field
-from pydantic.dataclasses import dataclass
+from pydantic.dataclasses import dataclass, Field
 
-from common.logger import logger
-from models.source_config import SourceConfig
+from src.common.logger import logger
 
 
 @dataclass
 class FileLoader(ABC):
     """Base class for file reader strategies."""
 
-    config: SourceConfig
+    file_path: Path
+    options: dict[str, Any] = Field(default_factory=dict)
 
-    def validate(self, file_path: Path) -> None:
+    def validate(self) -> None:
         """Validate that the target file exists."""
-        if not file_path.exists():
+        if not self.file_path.exists():
             raise FileNotFoundError(
-                f"[{self.__class__.__name__}] File not found: {str(file_path)}"
+                f"[{self.__class__.__name__}] File not found: {str(self.file_path)}"
             )
-        if not file_path.is_file():
+        if not self.file_path.is_file():
             raise ValueError(
-                f"[{self.__class__.__name__}] Invalid file path: {str(file_path)}"
+                f"[{self.__class__.__name__}] Invalid file path: {str(self.file_path)}"
             )
 
         pass
@@ -40,10 +39,10 @@ class FileLoader(ABC):
         validation, and error catching safely.
         """
 
-        self.validate(self.config.file_path)
+        self.validate()
 
         logger.info(
-            f"[{self.__class__.__name__}] Read data from file: {str(self.config.file_path)}."
+            f"[{self.__class__.__name__}] Read data from file: {str(self.file_path)}."
         )
 
         data = self._do_load()
