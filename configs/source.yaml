@@ -1,0 +1,43 @@
+- name: "csv_file"
+  source_type: "file"
+  config:
+    file_path: "configs/data_source.xlsx"
+    options:
+      {
+        "sheet_name": "data_source",
+        "has_header": True
+      }
+
+- name: "postgresql"
+  source_type: "database"
+  config:
+    engine: "postgresql"
+    connection_info:
+      database: "postgres"
+      host: "localhost"
+      port: 5432
+      user: "postgres"
+      password: "password"
+    query: "SELECT * FROM table"
+    options: null
+
+- name: "google"
+  source_type: "api"
+  config:
+    url: "https://google.com"
+    method: "GET"
+    options: null
+
+- name: "yahoo"
+  source_type: "api"
+  config:
+    url: "https://yahoo.com"
+    method: "GET"
+    options: null
+
+- name: "bing"
+  source_type: "api"
+  config:
+    url: "https://bing.com"
+    method: "GET"
+    options: null
