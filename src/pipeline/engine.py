@@ -43,7 +43,7 @@ from src.models.result.download_result import DownloadResult
 from src.models.result.reader_result import ReaderResult
 from src.models.result.storage_result import StorageResult
 from src.models.result.loader_result import LoaderResult
-from src.pipeline.task.source import SourceTask
+# from src.pipeline.task.source import SourceTask
 from src.pipeline.task.setup import SetupTask
 
 @dataclass
