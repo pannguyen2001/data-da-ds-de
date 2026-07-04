@@ -1,4 +1,21 @@
 # Data pipeline
+Created on: 2026-06-20
+Version: 0.1.0
+Author: [Pham Anh Nhat](https://github.com/pannguyen2001)
+
+## Overview
+This project is a data pipeline that fetches data from various sources, processes it, and stores it in a data lake. The pipeline is built using Python, Polars, DuckDb, Pytest, and it includes various components such as data ingestion, data lake management, data preprocessing, and data quality validation.
+
+## Installation
+To install the project, you need to have Python 3.9 or higher installed on your system. You can then clone the repository and install the required dependencies using the following commands:
+```bash
+git clone https://github.com/pannguyen2001/data-pipeline.git
+cd data-pipeline
+pip install -r requirements.txt
+```
+
+## Usage
+To use the project, you can run the `main.py` script with the required configuration. The configuration is passed as a dictionary to the `main` function, which is responsible for setting up the pipeline and starting the data processing.
 
 ## Folder structure
 ```

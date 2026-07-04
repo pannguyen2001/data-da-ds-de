@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 from pydantic.dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import polars as pl
 
 from src.models.config.db_connector_config import DbConfig
+from src.common.logger import logger
 
 
 @dataclass
@@ -40,6 +41,8 @@ class DatabaseConnector(ABC):
         try:
             return self.execute(query)
         except Exception as e:
+            logger.error(f"[{self.__class__.__name__}] Error: {str(e)}.")
+
             raise e
         finally:
             self.close()

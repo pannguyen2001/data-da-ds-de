@@ -4,7 +4,7 @@ from pathlib import Path
 from .constants import (
     date_today,
     # DataPipelineActivities,
-    PROJECT_NAME,
+    # PROJECT_NAME,
     LoggerLevels
 )
 
@@ -37,7 +37,7 @@ logger.add(
     sys.stdout,
     colorize=True,
     level="DEBUG",
-    format="<level>{level.icon}</level><level> {level}</level> [<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}\n",
+    format="<level>{level.icon}</level><level> {level}</level> [<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}",
     backtrace=True,
     diagnose=True,
     enqueue=True, # mutiple thread/processing
@@ -48,7 +48,7 @@ logger.add(
     rotation="1 week",
     retention="1 month",
     level="DEBUG",
-    format="[💡{level}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}\n",
+    format="[💡{level}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}",
     backtrace=True,
     diagnose=True,
     mode="a",
@@ -113,5 +113,17 @@ Can sort, filter, pagination by datetime, level, data pipeline phase, sub phase
 # # Sub phase common
 # other_common_logger = common_phase_logger.bind(sub_phase="other")
 
+"""
+P = ParamSpec("P")
+R = TypeVar("R")
 
+
+def logger_wrapper(func: Callable[P, R]) -> Callable[P, R]:
+    @wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        with logger.catch(reraise=True):
+            return func(*args, **kwargs)
+
+    return wrapper
+"""
 

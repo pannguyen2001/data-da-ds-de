@@ -11,16 +11,25 @@ class ExcelReader(FileReader):
     def validate(self, file_path: Path) -> None:
         super().validate(self.config.file_path)
 
-        config_sheet_name: Union[str, List[str]] = self.config.options.get(
+        if self.config.options is None:
+            raise ValueError(
+                f"[{self.__class__.__name__}] options is required."
+            )
+
+        config_sheet_name: str = self.config.options.get(
             "sheet_name", []
         )
         config_cols: Union[str, List[str]] = self.config.options.get("columns", [])
+
+        if isinstance(config_cols, str):
+            config_cols = [config_cols]
+
         workbook = CalamineWorkbook.from_path(self.config.file_path)
         sheet_names = workbook.sheet_names
 
         if config_sheet_name not in sheet_names:
             raise ValueError(
-                f"[{self.__class__.__name__}] '{config_sheet_name}' does not exist in file '{str(self.config.file_path)}'. Existing sheet: {', '.join(sheet_names)}."
+                f"[{self.__class__.__name__}] '{','.join(config_sheet_name)}' does not exist in file '{str(self.config.file_path)}'. Existing sheet: {', '.join(sheet_names)}."
             )
 
         sheet = workbook.get_sheet_by_name(config_sheet_name)
@@ -35,6 +44,7 @@ class ExcelReader(FileReader):
 
     def _do_load(self) -> pl.LazyFrame:
         """
+        Read per sheet in excel file.
         Common settings:
             sheet_name=sheet_names,
             has_header=True,
