@@ -3,7 +3,7 @@ from pathlib import Path
 from src.common.constants import FileType, ResolveFileType
 
 
-def detect_file_type(file_path: Path) -> FileType:
+def detect_file_type(file_path: Path) -> ResolveFileType:
     """
     Detects the file type of a given file path.
 

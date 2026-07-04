@@ -2,23 +2,21 @@ from pathlib import Path
 from typing import List, Union
 
 import polars as pl
+from pydantic.dataclasses import dataclass
 from python_calamine import CalamineWorkbook
 
 from src.common.reader.base import FileReader
 
 
+@dataclass
 class ExcelReader(FileReader):
     def validate(self, file_path: Path) -> None:
         super().validate(self.config.file_path)
 
         if self.config.options is None:
-            raise ValueError(
-                f"[{self.__class__.__name__}] options is required."
-            )
+            raise ValueError(f"[{self.__class__.__name__}] options is required.")
 
-        config_sheet_name: str = self.config.options.get(
-            "sheet_name", []
-        )
+        config_sheet_name: str = self.config.options.get("sheet_name", [])
         config_cols: Union[str, List[str]] = self.config.options.get("columns", [])
 
         if isinstance(config_cols, str):

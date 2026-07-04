@@ -3,41 +3,35 @@ import os
 import traceback
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Literal
-from typing import Any, Literal
 
+import polars as pl
 from pydantic import ConfigDict, Field
 from pydantic.dataclasses import dataclass
-import polars as pl
 
 from src.common.constants import OperationStatus
 from src.common.logger import logger
-from src.common.logger import logger
+from src.models.config.storage_config import StorageConfig
 from src.models.metadata import MetaData
 from src.models.result.storage_result import StorageResult
-
-
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class Storage(ABC):
     """Base class for file storage strategies."""
 
-    df: pl.LazyFrame | None = None
+    config: StorageConfig
     des_file_path: Path = Field(default_factory=Path)
-    options: dict[str, Any] | None = Field(default_factory=dict)
-    mode: Literal["a", "w", "i"] = (
-        "w"  # a: append, w: drop all and write, i: incremntal loader, default "w"
-    )
 
     def validate(self) -> None:
         """Subclasses must implement this method to handle specific file storage."""
-        if self.df is None:
+        if self.config.df is None:
             raise ValueError(f"[{self.__class__.__name__}] No data to storage.")
 
-        if self.des_file_path.is_dir():
-            raise ValueError(f"{self.des_file_path} is a directory.")
-            raise ValueError(f"{self.des_file_path} is a directory.")
+        if self.config.options is None:
+            self.config.options = {}
+
+        if not self.config.des_folder_path.is_dir():
+            raise ValueError(f"{self.config.des_folder_path} must be a directory.")
 
     @abstractmethod
     def _do_save(self) -> None:
@@ -47,6 +41,10 @@ class Storage(ABC):
 
     def save(self) -> StorageResult:
         """The main entrypoint for storage data."""
+
+        self.des_file_path: Path = (
+            self.config.des_folder_path / self.config.des_file_name
+        )
 
         try:
             logger.info(
@@ -60,7 +58,7 @@ class Storage(ABC):
                 exist_ok=True,
             )
 
-            rows = self.df.select(pl.len()).collect().item()
+            rows = self.config.df.select(pl.len()).collect().item()
 
             if rows == 0:
                 logger.info(f"[{self.__class__.__name__}] No data to storage.")

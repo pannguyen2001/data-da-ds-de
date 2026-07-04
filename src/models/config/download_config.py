@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 from pathlib import Path
 from typing import Literal
+
+from pydantic import BaseModel
 
 from src.common.constants import DownloadSource
 
@@ -8,6 +9,7 @@ from src.common.constants import DownloadSource
 class GGDriveOptions(BaseModel):
     item_type: Literal["file", "folder"] | None = None
     quiet: bool = False
+
 
 class HuggingFaceOptions(BaseModel):
     file_name: str | None = None

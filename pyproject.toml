@@ -29,4 +29,7 @@ dependencies = [
     "duckdb>=1.5.4",
     "pymongo>=4.17.0",
     "tabulate>=0.10.0",
+    "gdown>=6.1.0",
+    "huggingface-hub>=1.22.0",
+    "kaggle>=2.2.3",
 ]

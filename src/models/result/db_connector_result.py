@@ -1,18 +1,14 @@
-from pathlib import Path
-
+import polars as pl
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.common.constants import DownloadStatus
+from src.common.constants import DownloadStatus, OperationStatus
 from src.models.metadata import MetaData
 
 
-class DownloadResult(BaseModel):
+class DbConnectorResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    source: str
-    destination: Path
-    status: DownloadStatus
-    files_downloaded: list[Path]
-    duration_seconds: float
+    data: pl.LazyFrame | None
+    status: OperationStatus | DownloadStatus
     error: Exception | str | None
     metadata: MetaData = Field(default_factory=MetaData)

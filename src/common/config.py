@@ -3,7 +3,6 @@ from pathlib import Path
 from src.common.constants import date_today
 from src.common.create_io_entry import create_io_entry
 
-
 # ==========================================
 # Folder paths
 # ==========================================

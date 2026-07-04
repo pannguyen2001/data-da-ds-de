@@ -1,17 +1,17 @@
-from abc import ABC, abstractmethod
-from typing import Any
-import traceback
 import datetime
 import os
+import traceback
+from abc import ABC, abstractmethod
+from typing import Any
 
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
+from src.common.constants import OperationStatus
 from src.common.logger import logger
 from src.models.config.file_config import FileConfig
-from src.models.result.loader_result import LoaderResult
-from src.common.constants import OperationStatus
 from src.models.metadata import MetaData
+from src.models.result.loader_result import LoaderResult
 
 
 @dataclass
@@ -52,7 +52,9 @@ class FileLoader(ABC):
             )
 
             data = self._do_load()
-            data_size: float = round(os.path.getsize(self.config.file_path) / 1024 / 1024, 4)
+            data_size: float = round(
+                os.path.getsize(self.config.file_path) / 1024 / 1024, 4
+            )
 
             logger.info(f"[{self.__class__.__name__}] Read data complete.")
 

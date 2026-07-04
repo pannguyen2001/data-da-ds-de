@@ -1,8 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
-from pydantic import Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.common.constants import OperationStatus
 from src.models.metadata import MetaData
@@ -11,7 +10,7 @@ from src.models.metadata import MetaData
 class LoaderResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    data: Any | None
+    data: list | Any
     source: Path
     size_mb: float | None
     status: OperationStatus

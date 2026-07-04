@@ -1,13 +1,16 @@
-from abc import ABC, abstractmethod
-from pydantic.dataclasses import dataclass
-from pydantic import ConfigDict
-import traceback
+import datetime
 import time
+import traceback
+from abc import ABC, abstractmethod
 
+from pydantic import ConfigDict
+from pydantic.dataclasses import dataclass
+
+from src.common.constants import DownloadStatus
 from src.common.logger import logger
 from src.models.config.download_config import DownloadConfig
+from src.models.metadata import MetaData
 from src.models.result.download_result import DownloadResult
-from src.common.constants import DownloadStatus
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
@@ -18,7 +21,9 @@ class Downloader(ABC):
         """Validate arguments."""
 
         if not self.config.des_path:
-            raise ValueError(f"[{self.__class__.__name__}] Need provide path for download.")
+            raise ValueError(
+                f"[{self.__class__.__name__}] Need provide path for download."
+            )
 
     @abstractmethod
     def download(self) -> None:
@@ -29,9 +34,9 @@ class Downloader(ABC):
     # @logger_wrapper
     def execute(self) -> DownloadResult:
         """Execute dowload progress."""
-        try:
-            start_time = time.perf_counter()
 
+        start_time = time.perf_counter()
+        try:
             logger.info(
                 f"[{self.__class__.__name__}] Downloading data:\n"
                 f"- url: '{self.config.url}'\n"
@@ -51,6 +56,9 @@ class Downloader(ABC):
                     files_downloaded=[],
                     error=None,
                     duration_seconds=round(time.perf_counter() - start_time, 4),
+                    metadata=MetaData(
+                        end_at=datetime.datetime.now(datetime.timezone.utc)
+                    ),
                 )
 
             if self.config.dry_run:
@@ -64,6 +72,9 @@ class Downloader(ABC):
                     files_downloaded=[],
                     error=None,
                     duration_seconds=round(time.perf_counter() - start_time, 4),
+                    metadata=MetaData(
+                        end_at=datetime.datetime.now(datetime.timezone.utc)
+                    ),
                 )
 
             self.download()
@@ -86,6 +97,7 @@ class Downloader(ABC):
                 files_downloaded=files,
                 error=None,
                 duration_seconds=round(time.perf_counter() - start_time, 4),
+                metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
             )
 
         except Exception as e:
@@ -94,8 +106,9 @@ class Downloader(ABC):
             return DownloadResult(
                 source=self.config.url or self.config.id,
                 destination=self.config.des_path,
-                status=DownloadStatus.FAIL,
+                status=DownloadStatus.FAILED,
                 files_downloaded=[],
                 error=tb,
                 duration_seconds=round(time.perf_counter() - start_time, 4),
+                metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
             )

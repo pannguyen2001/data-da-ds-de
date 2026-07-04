@@ -7,10 +7,10 @@
 from pathlib import Path
 from typing import Any
 
-from src.pipeline.engine import PipelineEngine
-from src.common.logger import logger
 from src.common.cleanup_file_or_folder import cleanup_file_or_folder
 from src.common.constants import ResolveFileType
+from src.common.logger import logger
+from src.pipeline.engine import PipelineEngine
 
 
 def main(setup: dict[str, Any]):
@@ -28,12 +28,13 @@ if __name__ == "__main__":
         "source_config": [
             {
                 "file_path": Path("./configs/source.yaml"),
+                "file_type": "yaml",
                 "options": {"encoding": "utf-8", "errors": "raise", "mode": "r"},
             }
         ],
-        "storage": {
+        "storage_config": {
             "file_type": ResolveFileType.PARQUET,
-        }
+        },
     }
 
     cleanup_file_or_folder(

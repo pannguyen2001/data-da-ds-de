@@ -11,7 +11,6 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class SourceConfig:
-
     name: str
     url: str
 
@@ -24,7 +23,6 @@ class SourceConfig:
             "url": self.url,
             "timeout": self.timeout,
         }
-
 
 
 @dataclass
@@ -51,7 +49,7 @@ class SourceStatus:
             "content_type": self.content_type,
             "content_length": self.content_length,
             "checked_at": self.checked_at,
-            "error": self.error
+            "error": self.error,
         }
 
 
@@ -89,11 +87,14 @@ class DownloadResult:
             "download_id": str(self.download_id),
             "status": self.status.value,
             "started_at": self.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "ended_at": self.ended_at.strftime("%Y-%m-%d %H:%M:%S") if self.ended_at else None,
+            "ended_at": self.ended_at.strftime("%Y-%m-%d %H:%M:%S")
+            if self.ended_at
+            else None,
             "bytes_downloaded": self.bytes_downloaded,
             "checksum": self.checksum,
-            "error": self.error
+            "error": self.error,
         }
+
 
 # %%
 from pathlib import Path
@@ -107,6 +108,8 @@ def read_yaml(file_path: Path | str) -> list[dict]:
         raise FileNotFoundError(f"File not found: {file_path}")
     with file_path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
 # source_statuses = read_yaml("source_statuses.yaml")
 
 # %%
@@ -142,9 +145,7 @@ def fetch(config: SourceConfig) -> SourceStatus:
             config=config,
             reachable=False,
             http_status=getattr(response, "status_code", None),
-            error="".join(
-                traceback.TracebackException.from_exception(e).format()
-            ),
+            error="".join(traceback.TracebackException.from_exception(e).format()),
         )
 
 
@@ -169,28 +170,17 @@ def check_source_status(
     )
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(fetch, cfg) for cfg in source_configs]
 
-        futures = [
-            executor.submit(fetch, cfg)
-            for cfg in source_configs
-        ]
-
-        return [
-            future.result()
-            for future in futures
-        ]
+        return [future.result() for future in futures]
 
 
 # %%
 from pathlib import Path
 
-
 RAW_DIR = Path("./data/raw")
 
-configs = [
-    SourceConfig(**cfg)
-    for cfg in read_yaml(Path("source_config.yaml"))
-]
+configs = [SourceConfig(**cfg) for cfg in read_yaml(Path("source_config.yaml"))]
 
 statuses = check_source_status(configs)
 
