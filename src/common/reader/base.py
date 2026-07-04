@@ -1,6 +1,7 @@
 import datetime
 from abc import ABC, abstractmethod
 from pathlib import Path
+import traceback
 
 import polars as pl
 from pydantic import Field
@@ -44,34 +45,49 @@ class FileReader(ABC):
         validation, and error catching safely.
         """
 
-        logger.info(
-            f"[{self.__class__.__name__}] Read data from file: {str(self.config.file_path)}."
-        )
-        self.validate(self.config.file_path)
+        try:
+            logger.info(
+                f"[{self.__class__.__name__}] Read data from file: {str(self.config.file_path)}."
+            )
+            self.validate(self.config.file_path)
 
-        df = self._do_load()
+            df = self._do_load()
 
-        if df is None:
-            result = ReaderResult(
-                data=df,
+            if df is None:
+                result = ReaderResult(
+                    data=df,
+                    source=self.config.file_path,
+                    col_count=None,
+                    data_schema=None,
+                    status=OperationStatus.FAIL,
+                    error="Data is None",
+                    metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
+                )
+            else:
+                result = ReaderResult(
+                    data=df,
+                    source=self.config.file_path,
+                    col_count=df.shape[1]
+                    if isinstance(df, pl.DataFrame)
+                    else len(df.collect_schema()),
+                    data_schema=df.schema if isinstance(df, pl.DataFrame) else df.collect_schema(),
+                    status=OperationStatus.PASS,
+                    error=None,
+                    metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
+                )
+
+            logger.info(f"[{self.__class__.__name__}] Read data complete.")
+
+            return result
+        except Exception as e:
+            logger.error(f"[{self.__class__.__name__}] Error reading data: {str(e)}")
+            tb = "\n".join(traceback.TracebackException.from_exception(e).format())
+            return ReaderResult(
+                data=None,
                 source=self.config.file_path,
                 col_count=None,
                 data_schema=None,
                 status=OperationStatus.FAIL,
+                error=tb,
                 metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
             )
-        else:
-            result = ReaderResult(
-                data=df,
-                source=self.config.file_path,
-                col_count=df.shape[1]
-                if isinstance(df, pl.DataFrame)
-                else len(df.collect_schema()),
-                data_schema=df.schema if isinstance(df, pl.DataFrame) else df.collect_schema(),
-                status=OperationStatus.PASS,
-                metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
-            )
-
-        logger.info(f"[{self.__class__.__name__}] Read data complete.")
-
-        return result

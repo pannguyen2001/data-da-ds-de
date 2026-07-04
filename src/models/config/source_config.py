@@ -10,3 +10,5 @@ class SourceConfig(BaseModel):
     name: str
     source_type: SourceType
     config: FileConfig | ApiConfig | DbConfig
+
+    # TODO: Add mode: a: append, w: replace and write, o: onetime only load, i: incremental load

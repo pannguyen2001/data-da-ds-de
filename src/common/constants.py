@@ -29,6 +29,16 @@ project_root = Path(__file__).parent.resolve()
 # ====================
 # Enums
 # ====================
+
+# ===== Commons =====
+class DatetimeFormat(StrEnum):
+    DATE_YEAR_FIRST = "%Y-%m-%d"
+    DATETIME_YEAR_FIRST = "%Y-%m-%d %H:%M:%S"
+    DATE_MONTH_FIRST = "%m-%d-%Y"
+    DATETIME_MONTH_FIRST = "%m-%d-%Y %H:%M:%S"
+    DATE_DAY_FIRST = "%d-%m-%Y"
+    DATETIME_DAY_FIRST = "%d-%m-%Y %H:%M:%S"
+
 class DataPipelineActivities(StrEnum):
     COLLECTION = auto()
     INGESTION = auto()
@@ -55,6 +65,7 @@ class LoggerLevels(StrEnum):
     DEBUG = "DEBUG"
     TRACE = "TRACE"
 
+# ===== Source =====
 class FileType(StrEnum):
     CSV = auto()
     JSON = auto()
@@ -73,21 +84,12 @@ class ResolveFileType(StrEnum):
     YAML = auto()
     SQL = auto()
 
-class OperationStatus(StrEnum):
-    PASS = auto()
-    FAIL = auto()
-    SKIP = auto()
-
-class PipelineStatus(StrEnum):
-    PENDING = auto()
-    ERROR = auto()
-    SKIP = auto()
-
 class SourceType(StrEnum):
     FILE = auto()
     API = auto()
     DATABASE = auto()
     WEB = auto()
+    OPEN_DB = auto()
 
 class DbEngine(StrEnum):
     SQLITE = auto()
@@ -96,9 +98,32 @@ class DbEngine(StrEnum):
     MONGODB = auto()
     DUCKDB = auto()
 
-class ApiMethod(StrEnum, Enum):
+class ApiMethod(StrEnum):
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
     PATCH = "PATCH"
     DELETE = "DELETE"
+
+class DownloadSource(StrEnum):
+    GGDRIVE = auto()
+    HUGGINGFACE = auto()
+    KAGGLE = auto()
+
+# ===== Status =====
+class OperationStatus(StrEnum):
+    PASS = auto()
+    FAIL = auto()
+    SKIP = auto()
+
+# class PipelineStatus(StrEnum):
+#     PENDING = auto()
+#     ERROR = auto()
+#     SKIP = auto()
+
+class DownloadStatus(StrEnum):
+    SUCCESS = auto()
+    FAILED = auto()
+    SKIPPED = auto()
+    DRY_RUN = auto()
+
