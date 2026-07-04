@@ -1,5 +1,4 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+# import os
+# import sys
 
-from .test_check_file_exist import *
+# sys.path.append(os.path.dirname(os.path.dirname(__file__)))

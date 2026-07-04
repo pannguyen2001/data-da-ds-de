@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import polars as pl
-from pydantic import BaseModel, ConfigDict
-from pydantic import Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.common.constants import OperationStatus
 from src.models.metadata import MetaData
@@ -13,6 +12,7 @@ class ReaderResult(BaseModel):
 
     data: pl.LazyFrame | None
     source: Path
+    sheet: str | None
     col_count: int | None
     data_schema: pl.Schema | None
     status: OperationStatus

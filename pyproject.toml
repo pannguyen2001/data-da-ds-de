@@ -24,4 +24,12 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "pydantic>=2.13.4",
     "pandera>=0.32.1",
+    "pyyaml>=6.0.3",
+    "psycopg2>=2.9.12",
+    "duckdb>=1.5.4",
+    "pymongo>=4.17.0",
+    "tabulate>=0.10.0",
+    "gdown>=6.1.0",
+    "huggingface-hub>=1.22.0",
+    "kaggle>=2.2.3",
 ]

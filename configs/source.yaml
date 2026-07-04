@@ -2,11 +2,8 @@
   source_type: "file"
   config:
     file_path: "configs/data_source.xlsx"
-    options:
-      {
-        "sheet_name": "data_source",
-        "has_header": True
-      }
+    file_type: "excel"
+    options: { "sheet_name": "data_source", "has_header": True }
 
 - name: "postgresql"
   source_type: "database"
@@ -21,22 +18,16 @@
     query: "SELECT * FROM table"
     options: null
 
-
-- name: "test_open_db"
-  source_type: "open_db"
+- name: "test_opendb"
+  source_type: "opendb"
   config:
     download_source_type: "ggdrive"
     des_path: "./data/0_staging"
     url: "https://drive.google.com/drive/folders/1lg6905H4ME_1ZFNTpFAREj8Bawa9zLnz"
     id: ""
-    skip_existing: True
+    skip_existing: False
     dry_run: False
-    options:
-      {
-        "item_type": "folder",
-        "quiet": False
-      }
-
+    options: { "item_type": "folder", "quiet": False }
 
 - name: "google"
   source_type: "api"

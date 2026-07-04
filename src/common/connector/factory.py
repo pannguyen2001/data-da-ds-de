@@ -1,9 +1,11 @@
-from pydantic.dataclasses import dataclass
 from pydantic import Field
+from pydantic.dataclasses import dataclass
 
 from src.common.constants import DbEngine
-from .base import DatabaseConnector
 from src.models.config.source_config import SourceConfig
+
+from .base import DatabaseConnector
+
 # from src.connectors.database.postgresql import PostgresqlConnector
 # from src.connectors.database.duckdb import DuckDbConnector
 
@@ -11,7 +13,6 @@ from src.models.config.source_config import SourceConfig
 # Only use if expect external plugins, or complex config, else use registry for simple config
 @dataclass
 class DatabaseConnectorFactory:
-
     _connector: dict[DbEngine, type[DatabaseConnector]] = Field(default_factory=dict)
 
     def register(self, connector_name: DbEngine, connector: DatabaseConnector) -> None:
@@ -23,7 +24,9 @@ class DatabaseConnectorFactory:
         else:
             raise ValueError(f"Connector '{connector_name}' not found.")
 
-    def create(self, connector_name: DbEngine, config: SourceConfig) -> DatabaseConnector:
+    def create(
+        self, connector_name: DbEngine, config: SourceConfig
+    ) -> DatabaseConnector:
         connector_cls = self._connector.get(connector_name)
 
         if connector_cls is None:

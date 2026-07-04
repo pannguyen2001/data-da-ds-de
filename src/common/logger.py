@@ -1,13 +1,14 @@
 import sys
-from loguru import logger
 from pathlib import Path
+
+from loguru import logger
+
 from .constants import (
-    date_today,
     # DataPipelineActivities,
     # PROJECT_NAME,
-    LoggerLevels
+    LoggerLevels,
+    date_today,
 )
-
 
 # ===== Configure log file =====
 log_file = Path(f"./logs/{date_today}.log")
@@ -18,18 +19,18 @@ if not log_file.parent.exists():
 # Debug
 error_log_file = Path(f"./logs/error/{date_today}.log")
 if not error_log_file.parent.exists():
-    error_log_file.parent.mkdir("./logs/error",exist_ok=True, parents=True)
+    error_log_file.parent.mkdir("./logs/error", exist_ok=True, parents=True)
     error_log_file.touch()
 
 
 # ===== Set log level =====
 logger.remove()
-logger.level(name=LoggerLevels.DEBUG.value, color='<blue><bold>', icon='🔍')
-logger.level(name=LoggerLevels.INFO.value, color='<green><bold>', icon='💡')
-logger.level(name=LoggerLevels.SUCCESS.value, color='<cyan><bold>', icon='😀')
-logger.level(name=LoggerLevels.WARNING.value, color='<yellow><bold>', icon='❕')
-logger.level(name=LoggerLevels.ERROR.value, color='<red><bold>', icon='❌')
-logger.level(name=LoggerLevels.CRITICAL.value, color='<white><bold>', icon='🚫')
+logger.level(name=LoggerLevels.DEBUG.value, color="<blue><bold>", icon="🔍")
+logger.level(name=LoggerLevels.INFO.value, color="<green><bold>", icon="💡")
+logger.level(name=LoggerLevels.SUCCESS.value, color="<cyan><bold>", icon="😀")
+logger.level(name=LoggerLevels.WARNING.value, color="<yellow><bold>", icon="❕")
+logger.level(name=LoggerLevels.ERROR.value, color="<red><bold>", icon="❌")
+logger.level(name=LoggerLevels.CRITICAL.value, color="<white><bold>", icon="🚫")
 
 
 # ===== Add loggers =====
@@ -40,8 +41,8 @@ logger.add(
     format="<level>{level.icon}</level><level> {level}</level> [<green>{time:YYYY-MM-DD HH:mm:ss}</green>][<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>]\n{message}",
     backtrace=True,
     diagnose=True,
-    enqueue=True, # mutiple thread/processing
-    )
+    enqueue=True,  # mutiple thread/processing
+)
 
 logger.add(
     str(log_file),
@@ -71,20 +72,6 @@ logger.add(
 )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ========== Format message ==========
 """
 [MESSAGE_LEVEL] [datetime] [file_execute - line] - [DATA_PIPELINE_PHASE] [Sub phase] message
@@ -112,18 +99,3 @@ Can sort, filter, pagination by datetime, level, data pipeline phase, sub phase
 
 # # Sub phase common
 # other_common_logger = common_phase_logger.bind(sub_phase="other")
-
-"""
-P = ParamSpec("P")
-R = TypeVar("R")
-
-
-def logger_wrapper(func: Callable[P, R]) -> Callable[P, R]:
-    @wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        with logger.catch(reraise=True):
-            return func(*args, **kwargs)
-
-    return wrapper
-"""
-

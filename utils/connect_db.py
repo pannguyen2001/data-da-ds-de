@@ -1,5 +1,7 @@
 import sqlite3
+
 from .logger import other_common_logger as logger
+
 
 @logger.catch
 def connect_db(db_file_path: str = ""):
@@ -22,6 +24,7 @@ def connect_db(db_file_path: str = ""):
 
     logger.info("Database created and connected successfully!")
     return connection, cursor
+
 
 @logger.catch
 def close_db(connection: sqlite3.Connection):

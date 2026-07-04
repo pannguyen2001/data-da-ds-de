@@ -1,15 +1,16 @@
 import datetime
+import traceback
 from abc import ABC, abstractmethod
 from pathlib import Path
-import traceback
 
 import polars as pl
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
+from src.common.constants import OperationStatus, ResolveFileType
+from src.common.detect_file_type import detect_file_type
 from src.common.logger import logger
 from src.models.config.file_config import FileConfig
-from src.common.constants import OperationStatus
 from src.models.metadata import MetaData
 from src.models.result.reader_result import ReaderResult
 
@@ -45,11 +46,17 @@ class FileReader(ABC):
         validation, and error catching safely.
         """
 
+        self.validate(self.config.file_path)
+
         try:
             logger.info(
                 f"[{self.__class__.__name__}] Read data from file: {str(self.config.file_path)}."
             )
-            self.validate(self.config.file_path)
+            if self.config.file_type == ResolveFileType.EXCEL:
+                sheet = self.config.options.get("sheet_name")
+                logger.info(f"[{self.__class__.__name__}] sheet name: {sheet}.")
+            else:
+                sheet = None
 
             df = self._do_load()
 
@@ -57,23 +64,31 @@ class FileReader(ABC):
                 result = ReaderResult(
                     data=df,
                     source=self.config.file_path,
+                    sheet=sheet,
                     col_count=None,
                     data_schema=None,
                     status=OperationStatus.FAIL,
                     error="Data is None",
-                    metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
+                    metadata=MetaData(
+                        end_at=datetime.datetime.now(datetime.timezone.utc)
+                    ),
                 )
             else:
                 result = ReaderResult(
                     data=df,
                     source=self.config.file_path,
+                    sheet=sheet,
                     col_count=df.shape[1]
                     if isinstance(df, pl.DataFrame)
                     else len(df.collect_schema()),
-                    data_schema=df.schema if isinstance(df, pl.DataFrame) else df.collect_schema(),
+                    data_schema=df.schema
+                    if isinstance(df, pl.DataFrame)
+                    else df.collect_schema(),
                     status=OperationStatus.PASS,
                     error=None,
-                    metadata=MetaData(end_at=datetime.datetime.now(datetime.timezone.utc)),
+                    metadata=MetaData(
+                        end_at=datetime.datetime.now(datetime.timezone.utc)
+                    ),
                 )
 
             logger.info(f"[{self.__class__.__name__}] Read data complete.")
@@ -85,6 +100,7 @@ class FileReader(ABC):
             return ReaderResult(
                 data=None,
                 source=self.config.file_path,
+                sheet=None,
                 col_count=None,
                 data_schema=None,
                 status=OperationStatus.FAIL,

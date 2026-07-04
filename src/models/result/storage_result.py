@@ -9,7 +9,7 @@ from src.models.metadata import MetaData
 class StorageResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    destination: Path
+    destination: Path | None
     size_mb: float | None
     status: OperationStatus
     error: Exception | str | None

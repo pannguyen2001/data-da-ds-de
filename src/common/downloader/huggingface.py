@@ -1,7 +1,8 @@
+import os
+
+import polars as pl
 from huggingface_hub import hf_hub_download
 from pydantic.dataclasses import dataclass
-import polars as pl
-import os
 
 from src.common.downloader.base import Downloader
 

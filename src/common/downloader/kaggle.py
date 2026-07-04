@@ -12,7 +12,9 @@ class KaggleDownloader(Downloader):
         super().validate()
 
         if not self.config.id:
-            raise ValueError(f"[{self.__class__.__name__}] Need provide id for kaggle dataset.")
+            raise ValueError(
+                f"[{self.__class__.__name__}] Need provide id for kaggle dataset."
+            )
 
     @classmethod
     def _get_api(cls) -> KaggleApi:
