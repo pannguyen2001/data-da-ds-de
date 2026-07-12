@@ -1,49 +1,20 @@
-from pathlib import Path
 from typing import Any
 
-import polars as pl
-from pydantic import Field
-from pydantic.dataclasses import dataclass
-from python_calamine import CalamineWorkbook
+from dataclasses import dataclass, field
 
-from src.common.config import (
-    brozen_data_folder,
-    golden_data_folder,
-    silver_data_folder,
-    staging_data_folder,
-    test_data_folder,
-)
-from src.common.connector.base import DatabaseConnector
-from src.common.connector.registry import _DB_CONNECTORS
-from src.common.constants import (
-    DbEngine,
-    DownloadSource,
-    DownloadStatus,
-    OperationStatus,
-    ResolveFileType,
-    SourceType,
-)
-from src.common.detect_file_type import detect_file_type
-from src.common.downloader.base import Downloader
-from src.common.downloader.registry import _DOWNLOADERS
-from src.common.loader.registry import _LOADERS
 from src.common.logger import logger
-from src.common.reader.base import FileReader
-from src.common.reader.registry import _READERS
-from src.common.storage.registry import _STORAGES
-from src.models.config.api_config import ApiConfig
-from src.models.config.db_connector_config import DbConfig
-from src.models.config.download_config import DownloadConfig
-from src.models.config.file_config import FileConfig
-from src.models.config.source_config import SourceConfig
-from src.models.result.download_result import DownloadResult
-from src.models.result.loader_result import LoaderResult
-from src.models.result.reader_result import ReaderResult
-from src.models.result.storage_result import StorageResult
-
-# from src.pipeline.task.source import SourceTask
+from src.io.connector.base import DatabaseConnector
+from src.io.downloader.base import Downloader
+from src.io.reader.base import FileReader
+from src.pipeline.task.build_io_config import BuildIOConfigTask
+from src.pipeline.task.check_source import CheckSourceTask
 from src.pipeline.task.preprocess_source import PreprocessSourceTask
-from src.pipeline.task.setup import SetupTask
+from src.pipeline.task.storage import StorageTask
+from src.checkpoint.manager import CheckpointManager
+from src.io.loader.registry import _LOADERS
+from src.common.constants import OperationStatus
+from src.pipeline.context import PipelineContext
+from src.checkpoint.manager import Checkpoint
 
 
 @dataclass
@@ -95,50 +66,83 @@ class PipelineEngine:
 
     """
 
-    setup: dict[str, Any] = Field(default_factory=dict)
-
-    readers: list[FileReader] = Field(default_factory=list)
-    dbconnectors: list[DatabaseConnector] = Field(default_factory=list)
-    downloaders: list[Downloader] = Field(default_factory=list)
+    setup: dict[str, Any] = field(default_factory=dict)
+    context: PipelineContext = field(default_factory=PipelineContext)
 
     @logger.catch
     def run(self):
         """
         Run pipeline.
         1. Setup pipeline.
-        2. Preprocess readers.
-        3. Preprocess dbconnectors.
-        4. Preprocess apis.
-        5. Preprocess web.
-        6. Preprocess downloader.
+        2. Check source status.
+        3. Preprocess source.
+        4. Storage to raw.
         """
 
-        # Setup
-        source_config: list[dict] = self.setup.get("source_config", [])
-        storage_config: dict = self.setup.get("storage_config", [])
+        # ==============================
+        # Config
+        # ==============================
+        self.context.setup = self.setup
+        previous_checkpoint: list[Checkpoint] = CheckpointManager(config=self.context.setup.get("checkpoint")).load_checkpoint()
+        logger.info(f"Previous checkpoint: {previous_checkpoint}.")
 
-        self.readers, self.dbconnectors, self.downloaders = SetupTask(
-            source_config
-        ).run()
+        failed_task: list[str] = [task.task_name for task in previous_checkpoint if task.status == OperationStatus.FAIL]
+        logger.info(f"Previous failed task: {failed_task}.")
 
-        # Preprocessing
-        PreprocessSourceTask(
-            config=storage_config,
-            readers=self.readers,
-            dbconnectors=self.dbconnectors,
-            downloaders=self.downloaders,
-        ).run()
+        TASKS = [
+            BuildIOConfigTask(context=self.context),
+            CheckSourceTask(context=self.context),
+            PreprocessSourceTask(context=self.context),
+            StorageTask(context=self.context)
+        ]
 
-        # Validate
+        # ==============================
+        # Process
+        # ==============================
+        if not previous_checkpoint:
+            for task in TASKS:
+                task_checkpoint = task.run()
+                self.context.checkpoint.add_checkpoint(task_checkpoint)
+                continue
+        else:
+            resume = False
+            for task in TASKS:
+                if task.always_run:
+                    task_checkpoint = task.run()
+                    self.context.checkpoint.add_checkpoint(task_checkpoint)
+                    continue
 
-        # Transform
+                if resume:
+                    task_checkpoint = task.run()
+                    self.context.checkpoint.add_checkpoint(task_checkpoint)
+                    continue
 
-        # .....
+                is_passed = task.__class__.__name__ not in failed_task
+                if is_passed:
+                    logger.info(f"Skip task {task.__class__.__name__}.")
+                    self.context.checkpoint.add_checkpoint(Checkpoint(task_name=task.__class__.__name__, status=OperationStatus.SKIP))
+                    continue
+
+                resume = True
+                logger.info(f"Resume task {task.__class__.__name__}.")
+                task_checkpoint = task.run()
+                self.context.checkpoint.add_checkpoint(task_checkpoint)
+
+
+        # # Validate
+
+        # # Transform
+
+        # # .....
+
+        # ==============================
+        # Conclusion
+        # ==============================
+        # Save check point
+        self.context.checkpoint.save_checkpoint()
 
         # TODO: Add checkpoint
         # ckecpoint, status, log, alert, mornitoring, orchestration, report for each step
-        # check api status -> download or  not
-        # file -> transfer to sql or parquet -> save to raw
 
 
 """

@@ -1,0 +1,23 @@
+# .git
+# .github
+# .venv
+# venv
+# __pycache__
+# *.pyc
+# .pytest_cache
+# .ruff_cache
+# .mypy_cache
+
+# # Never bake secrets or local data into an image layer
+# .env
+# data/
+# logs/
+# reports/
+# *.log
+
+# # Editor/OS noise
+# .vscode
+# .idea
+# .DS_Store
+
+# README.md

@@ -4,8 +4,6 @@ from pathlib import Path
 from loguru import logger
 
 from .constants import (
-    # DataPipelineActivities,
-    # PROJECT_NAME,
     LoggerLevels,
     date_today,
 )
@@ -17,10 +15,9 @@ if not log_file.parent.exists():
     log_file.touch()
 
 # Debug
+Path("./logs/error").mkdir(exist_ok=True, parents=True)
 error_log_file = Path(f"./logs/error/{date_today}.log")
-if not error_log_file.parent.exists():
-    error_log_file.parent.mkdir("./logs/error", exist_ok=True, parents=True)
-    error_log_file.touch()
+error_log_file.touch()
 
 
 # ===== Set log level =====
@@ -62,7 +59,7 @@ logger.add(
     str(error_log_file),
     rotation="1 week",
     retention="1 month",
-    level="WARNING",
+    level="ERROR",
     format="[{level}][{time:YYYY-MM-DD HH:mm:ss}][{name}:{function}:{line}]\n{message}",
     backtrace=True,
     diagnose=True,
@@ -86,16 +83,3 @@ Datetime: YYYY-MM-DD HH:MM:SS
 Message: clear content: error, info, variable: a = 1, ... beautiful format, if dict, use json.dumps() python
 Can sort, filter, pagination by datetime, level, data pipeline phase, sub phase
 """
-# common_phase_logger = logger.bind(phase=DataPipelineActivities.COMMON)
-# collection_phase_logger = logger.bind(phase=DataPipelineActivities.COLLECTION)
-# ingestion_phase_logger = logger.bind(phase=DataPipelineActivities.INGESTION)
-# computing_phase_logger = logger.bind(phase=DataPipelineActivities.COMPUTING)
-# storage_phase_logger = logger.bind(phase=DataPipelineActivities.STORAGE)
-# consumption_phase_logger = logger.bind(phase=DataPipelineActivities.CONSUMPTION)
-# management_phase_logger = logger.bind(phase=DataPipelineActivities.MANAGEMENT)
-# governance_phase_logger = logger.bind(phase=DataPipelineActivities.GOVERNANCE)
-# monitoring_phase_logger = logger.bind(phase=DataPipelineActivities.MONITORING)
-
-
-# # Sub phase common
-# other_common_logger = common_phase_logger.bind(sub_phase="other")

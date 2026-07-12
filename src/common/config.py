@@ -30,6 +30,10 @@ test_data_folder: Path = create_io_entry(data_folder + "/4_test")
 # error_log_file: str = "./logs/error"
 # error_log_file: Path = create_io_entry(error_log_file, f"{date_today}.log")
 
+# =========== Checkpoint ==========
+checkpoint_folder: str = "./checkpoints"
+checkpoint_file: Path = create_io_entry(checkpoint_folder, "checkpoint.json")
+
 # =========== Report ==========
 report_folder: str = f"./reports/{date_today}"
 report_file: Path = create_io_entry(report_folder)

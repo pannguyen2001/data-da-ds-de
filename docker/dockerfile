@@ -1,0 +1,69 @@
+# # syntax=docker/dockerfile:1
+
+# ##########
+# # Stage 1: builder — has compilers, only lives in the build cache
+# ##########
+# FROM python:3.11-slim AS builder
+
+# # libpq-dev + gcc are needed to build psycopg2 from source.
+# # If you switch to `psycopg2-binary` in pyproject.toml you can drop these
+# # and get a faster, smaller build — worth doing once you're past prototyping.
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     build-essential \
+#     libpq-dev \
+#     && rm -rf /var/lib/apt/lists/*
+
+# WORKDIR /build
+
+# # Copy only dependency manifests first so Docker can cache this layer
+# # and skip reinstalling deps when you only change application code.
+# COPY pyproject.toml ./
+
+# RUN python -m venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+
+# RUN pip install --upgrade pip \
+#     && pip install .
+
+# ##########
+# # Stage 2: runtime — slim, no compilers, just the app + venv
+# ##########
+# FROM python:3.11-slim AS runtime
+
+# # libpq5 is the *runtime* lib for psycopg2 (not the -dev headers, much smaller)
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     libpq5 \
+#     && rm -rf /var/lib/apt/lists/* \
+#     && useradd --create-home --uid 1000 pipeline
+
+# COPY --from=builder /opt/venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH" \
+#     PYTHONUNBUFFERED=1 \
+#     PYTHONDONTWRITEBYTECODE=1
+
+# WORKDIR /app
+# COPY --chown=pipeline:pipeline . .
+
+# # Data/log/report folders should be volumes in practice (see docker-compose.yml)
+# # but create them here too so a standalone `docker run` doesn't crash on missing dirs.
+# RUN mkdir -p data/0_staging data/1_brozen data/2_silver data/3_golden data/4_test \
+#     logs/error reports \
+#     && chown -R pipeline:pipeline data logs reports
+
+# USER pipeline
+
+# CMD ["python", "main.py"]
+
+
+
+# # FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+
+# # WORKDIR /app
+
+# # COPY pyproject.toml uv.lock ./
+
+# # RUN uv sync --frozen
+
+# # COPY . .
+
+# # CMD ["uv", "run", "python", "-m", "src.main"]
