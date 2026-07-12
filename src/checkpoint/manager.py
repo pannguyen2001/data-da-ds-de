@@ -2,16 +2,16 @@ import datetime
 import json
 import traceback
 from typing import Any
+from uuid import UUID, uuid4
+from zoneinfo import ZoneInfo
 
-from uuid import uuid4, UUID
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
-from pydantic import Field, ConfigDict, BaseModel, field_serializer
-from src.common.constants import OperationStatus
-from src.models.metadata import MetaData
+from src.common.config import checkpoint_file
+from src.common.constants import DatetimeFormat, OperationStatus
 from src.common.logger import logger
 from src.io.loader.registry import _LOADERS
-from src.common.config import checkpoint_file
-from src.common.constants import DatetimeFormat
+from src.models.metadata import MetaData
 
 
 class Checkpoint(BaseModel):
@@ -34,12 +34,22 @@ class Checkpoint(BaseModel):
 
     @field_serializer("start_at")
     def serialize_start_at(self, value: datetime.datetime):
-        tz_value = value if value.tzinfo else value.replace(tzinfo=datetime.timezone.utc)
+        tz_value = (
+            value
+            if value.tzinfo
+            else value.replace(tzinfo=ZoneInfo("Asia/Ho_Chi_Minh"))
+        )
         return tz_value.strftime(DatetimeFormat.DATETIME_YEAR_FIRST.value)
 
     @field_serializer("end_at")
     def serialize_end_at(self, value: datetime.datetime | None):
-        return value.strftime(DatetimeFormat.DATETIME_YEAR_FIRST.value) if value else None
+        return (
+            value.replace(tzinfo=ZoneInfo("Asia/Ho_Chi_Minh")).strftime(
+                DatetimeFormat.DATETIME_YEAR_FIRST.value
+            )
+            if value
+            else None
+        )
 
     @field_serializer("run_id")
     def serialize_run_id(self, value: UUID):
@@ -49,7 +59,9 @@ class Checkpoint(BaseModel):
         self.status = OperationStatus.PASS
 
     def mark_failed(self, error: Exception | str):
-        self.error = "\n".join(traceback.TracebackException.from_exception(error).format())
+        self.error = "\n".join(
+            traceback.TracebackException.from_exception(error).format()
+        )
         self.status = OperationStatus.FAIL
 
     def mark_skipped(self):
@@ -66,9 +78,12 @@ class Checkpoint(BaseModel):
 
     def finalize(self):
         if not self.start_at.tzinfo:
-            self.start_at = self.start_at.replace(tzinfo=datetime.timezone.utc)
-        self.end_at = datetime.datetime.now(datetime.timezone.utc)
+            self.start_at = self.start_at.replace(tzinfo=ZoneInfo("Asia/Ho_Chi_Minh"))
+        self.end_at = datetime.datetime.now().replace(
+            tzinfo=ZoneInfo("Asia/Ho_Chi_Minh")
+        )
         self.duration = (self.end_at - self.start_at).total_seconds()
+
 
 class CheckpointManager(BaseModel):
     """Manages the checkpointing of models."""
@@ -100,7 +115,9 @@ class CheckpointManager(BaseModel):
             logger.info("No last checkpoint data. Run pipleine from start.")
             return self.results
 
-        self.results = [Checkpoint(**result) for result in checkpoint_result.data.get("results", [])]
+        self.results = [
+            Checkpoint(**result) for result in checkpoint_result.data.get("results", [])
+        ]
         return self.results
 
     def add_checkpoint(self, checkpoint: Checkpoint):
@@ -112,7 +129,9 @@ class CheckpointManager(BaseModel):
         for cp in self.results:
             cp.finalize()
 
-        self.metadata.end_at = datetime.datetime.now(datetime.timezone.utc)
+        self.metadata.end_at = datetime.datetime.now(datetime.timezone.utc).replace(
+            tzinfo=ZoneInfo("Asia/Ho_Chi_Minh")
+        )
 
         result = self.model_dump() if hasattr(self, "model_dump") else self.dict()
         del result["config"]

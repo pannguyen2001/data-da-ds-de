@@ -4,13 +4,13 @@ from python_calamine import CalamineWorkbook
 
 from src.common.constants import DownloadStatus, ResolveFileType
 from src.common.detect_file_type import detect_file_type
-from src.io.downloader.base import Downloader
 from src.common.logger import logger
+from src.io.connector.base import DatabaseConnector
+from src.io.downloader.base import Downloader
 from src.io.reader.base import FileReader
 from src.io.reader.registry import _READERS
 from src.models.config.file_config import FileConfig
 from src.models.result.download_result import DownloadResult
-from src.io.connector.base import DatabaseConnector
 from src.pipeline.task.base import BaseTask
 
 
@@ -56,6 +56,7 @@ class PreprocessSourceTask(BaseTask):
 
         self.detailed["preprocessed_downloader"] = []
         self.detailed["skipped_downloader"] = []
+
         download_result: DownloadResult = downloader.execute()
         logger.info(f"Downloader result: {download_result.model_dump()}.")
 
@@ -65,9 +66,7 @@ class PreprocessSourceTask(BaseTask):
                     suffix: ResolveFileType = detect_file_type(file_downloaded)
                 except Exception as e:
                     logger.error(e)
-                    self.detailed["skipped_downloader"].append(
-                        str(file_downloaded)
-                    )
+                    self.detailed["skipped_downloader"].append(str(file_downloaded))
                     continue
 
                 if suffix == ResolveFileType.EXCEL:
@@ -98,9 +97,7 @@ class PreprocessSourceTask(BaseTask):
                         str(file_downloaded)
                     )
         elif download_result.status == DownloadStatus.SKIPPED:
-            self.detailed["skipped_downloader"].append(
-                str(download_result.destination)
-            )
+            self.detailed["skipped_downloader"].append(str(download_result.destination))
 
         logger.info("Preprocess downloader complete.")
 
