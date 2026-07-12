@@ -1,0 +1,119 @@
+# name: CD
+
+# on:
+#   push:
+#     branches: [main]
+#     tags: ["v*.*.*"]
+#   workflow_dispatch: {}   # lets you trigger a rebuild manually from the Actions tab
+
+# permissions:
+#   contents: read
+#   packages: write   # needed to push to GitHub Container Registry
+
+# env:
+#   REGISTRY: ghcr.io
+#   IMAGE_NAME: ${{ github.repository }}   # e.g. pannguyen2001/data-pipeline
+
+# jobs:
+#   # CD should never publish an image that CI hasn't already validated.
+#   build-and-push:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
+
+#       - name: Log in to GHCR
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ${{ env.REGISTRY }}
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}   # auto-provided, no setup needed
+
+#       - name: Extract metadata (tags, labels)
+#         id: meta
+#         uses: docker/metadata-action@v5
+#         with:
+#           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#           tags: |
+#             type=sha,prefix=,format=short
+#             type=raw,value=latest,enable={{is_default_branch}}
+#             type=semver,pattern={{version}}
+
+#       - name: Build and push
+#         uses: docker/build-push-action@v6
+#         with:
+#           context: .
+#           push: true
+#           tags: ${{ steps.meta.outputs.tags }}
+#           labels: ${{ steps.meta.outputs.labels }}
+#           cache-from: type=gha
+#           cache-to: type=gha,mode=max
+
+# # After this runs, your image is pullable with:
+# #   docker pull ghcr.io/<your-github-username>/<repo-name>:latest
+# # First time: make the package public in GitHub → Packages → package settings,
+# # or keep it private and `docker login ghcr.io` with a PAT to pull it.
+
+
+
+# # name: CD
+
+# # on:
+# #   push:
+# #     branches: [main]
+# #     tags: ["v*.*.*"]
+# #   workflow_dispatch: {}   # lets you trigger a rebuild manually from the Actions tab
+
+# # permissions:
+# #   contents: read
+# #   packages: write   # needed to push to GitHub Container Registry
+
+# # env:
+# #   REGISTRY: ghcr.io
+# #   IMAGE_NAME: ${{ github.repository }}   # e.g. pannguyen2001/data-pipeline
+
+# # jobs:
+# #   # CD should never publish an image that CI hasn't already validated.
+# #   build-and-push:
+# #     runs-on: ubuntu-latest
+# #     steps:
+# #       - name: Checkout
+# #         uses: actions/checkout@v4
+
+# #       - name: Set up Docker Buildx
+# #         uses: docker/setup-buildx-action@v3
+
+# #       - name: Log in to GHCR
+# #         uses: docker/login-action@v3
+# #         with:
+# #           registry: ${{ env.REGISTRY }}
+# #           username: ${{ github.actor }}
+# #           password: ${{ secrets.GITHUB_TOKEN }}   # auto-provided, no setup needed
+
+# #       - name: Extract metadata (tags, labels)
+# #         id: meta
+# #         uses: docker/metadata-action@v5
+# #         with:
+# #           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+# #           tags: |
+# #             type=sha,prefix=,format=short
+# #             type=raw,value=latest,enable={{is_default_branch}}
+# #             type=semver,pattern={{version}}
+
+# #       - name: Build and push
+# #         uses: docker/build-push-action@v6
+# #         with:
+# #           context: .
+# #           push: true
+# #           tags: ${{ steps.meta.outputs.tags }}
+# #           labels: ${{ steps.meta.outputs.labels }}
+# #           cache-from: type=gha
+# #           cache-to: type=gha,mode=max
+
+# # # After this runs, your image is pullable with:
+# # #   docker pull ghcr.io/<your-github-username>/<repo-name>:latest
+# # # First time: make the package public in GitHub → Packages → package settings,
+# # # or keep it private and `docker login ghcr.io` with a PAT to pull it.

@@ -1,83 +1,29 @@
 from dataclasses import dataclass, field
-from typing import Any
 
 from python_calamine import CalamineWorkbook
 
-from src.common.config import (
-    brozen_data_folder,
-)
-from src.common.connector.base import DatabaseConnector
-from src.common.constants import DownloadStatus, OperationStatus, ResolveFileType
+from src.common.constants import DownloadStatus, ResolveFileType
 from src.common.detect_file_type import detect_file_type
-from src.common.downloader.base import Downloader
+from src.io.downloader.base import Downloader
 from src.common.logger import logger
-from src.common.reader.base import FileReader
-from src.common.reader.registry import _READERS
+from src.io.reader.base import FileReader
+from src.io.reader.registry import _READERS
 from src.models.config.file_config import FileConfig
-from src.models.config.storage_config import StorageConfig
 from src.models.result.download_result import DownloadResult
-from src.models.result.reader_result import ReaderResult
-from src.storage.storage import StorageData
+from src.io.connector.base import DatabaseConnector
+from src.pipeline.task.base import BaseTask
 
 
 @dataclass
-class PreprocessSourceTask:
-    config: dict
-
-    data_list: list = field(default_factory=list)
-
-    readers: list[FileReader] = field(default_factory=list)
-    dbconnectors: list[DatabaseConnector] = field(default_factory=list)
-    downloaders: list[Downloader] = field(default_factory=list)
-
-    def _preprocess_reader(self, reader: FileReader) -> None:
-        """
-        Preprocess reader.
-        1. Load reader config.
-        2. Read data from file.
-        3. Save data as parquet to brozen.
-        # TODO:
-            - Read save mode: a: append, w: replace and write, o: onetime only load, i: incremental load,  just load update/delete/insert data, not load all or replace all. (SDC, CDC,...)
-            - if o mode: check if exist and not empty: return None, else save data.
-        """
-
-        logger.info("Preprocess reader process.")
-
-        result: ReaderResult = reader.load()
-        logger.info(f"Reader result: {result.model_dump()}.")
-
-        if result.status == OperationStatus.PASS:
-            if result.sheet is not None:
-                des_file_name = f"{result.source.stem}/{result.sheet}.{self.file_type}"
-            else:
-                des_file_name = f"{result.source.stem}.{self.file_type}"
-
-            storage_config: StorageConfig = StorageConfig(
-                df=result.data,
-                des_folder_path=brozen_data_folder,
-                des_file_name=des_file_name,
-                mode="w",
-                options=None,
-            )
-            StorageData(config=storage_config, file_type=self.file_type).run()
-
-        logger.info("Preprocess reader complete.")
-
-    def _preprocess_dbconnector(self):
-        """
-        Preprocess dbconnector.
-        1. Load dbconnector config.
-        2. Read data from db.
-        3. Save data as parquet to brozen.
-        """
-
-        pass
+class PreprocessSourceTask(BaseTask):
+    always_run: bool = True
+    file_type: ResolveFileType | None = None
+    detailed: dict = field(default_factory=dict)
 
     def _preprocess_api(self):
         """
         Preprocess api.
         1. Load api config.
-        2. Check API status, get API can download, alert API can not download.
         2. Read data from API.
         3. Save data as parquet to staging.
         4. If data is not parquet, load data to parquet.
@@ -90,7 +36,6 @@ class PreprocessSourceTask:
         """
         Preprocess web.
         1. Load web config.
-        2. Check web status, get web can crawl, alert web can not crawl.
         2. Read data from web.
         3. Save data as parquet to staging.
         4. If data is not parquet, load data to parquet.
@@ -103,12 +48,14 @@ class PreprocessSourceTask:
         """
         Preprocess downloader.
         1. Load downloader config.
-        2. Check downloader status, get downloader can download, alert open db can not download.
+        2. Download data from url.
         3. Convert result to file reader.
         """
 
         logger.info("Preprocess downloader process.")
 
+        self.detailed["preprocessed_downloader"] = []
+        self.detailed["skipped_downloader"] = []
         download_result: DownloadResult = downloader.execute()
         logger.info(f"Downloader result: {download_result.model_dump()}.")
 
@@ -118,6 +65,9 @@ class PreprocessSourceTask:
                     suffix: ResolveFileType = detect_file_type(file_downloaded)
                 except Exception as e:
                     logger.error(e)
+                    self.detailed["skipped_downloader"].append(
+                        str(file_downloaded)
+                    )
                     continue
 
                 if suffix == ResolveFileType.EXCEL:
@@ -135,37 +85,40 @@ class PreprocessSourceTask:
                                 options=options,
                             )
                         )
-                        self.readers.append(reader)
+                        self.context.readers.append(reader)
+                        self.detailed["preprocessed_downloader"].append(
+                            str(file_downloaded) + " - " + sheet
+                        )
                 else:
                     reader = _READERS[suffix](
                         FileConfig(file_path=file_downloaded, file_type=suffix)
                     )
-                    self.readers.append(reader)
+                    self.context.readers.append(reader)
+                    self.detailed["preprocessed_downloader"].append(
+                        str(file_downloaded)
+                    )
+        elif download_result.status == DownloadStatus.SKIPPED:
+            self.detailed["skipped_downloader"].append(
+                str(download_result.destination)
+            )
 
         logger.info("Preprocess downloader complete.")
 
-    def run(self) -> Any:
-        """Run preprocessing task."""
+    def _execute(self):
+        """Run preprocessing task. For API/web/opendb, connect and download to staging folder. Then create File reader for each file in staging folder. For file, detect and group file based on file name pattern (and sheet name if have). Then save to raw folder."""
 
-        self.file_type: ResolveFileType = self.config.get("file_type")
-
-        # self._preprocess_dbconnector()
+        config: dict = self.context.setup.get("storage_config")
+        self.file_type: ResolveFileType = config.get("file_type")
 
         # self._preprocess_api()
 
         # self._preprocess_web()
 
-        if not self.downloaders:
+        if not self.context.downloaders:
             logger.info("No downloaders to preprocess.")
         else:
-            for downloader in self.downloaders:
+            for downloader in self.context.downloaders:
                 self._preprocess_downloader(downloader)
-
-        if not self.readers:
-            logger.info("No readers to preprocess.")
-        else:
-            for reader in self.readers:
-                self._preprocess_reader(reader)
 
     # Preprocessing
     # TODO

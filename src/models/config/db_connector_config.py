@@ -11,6 +11,8 @@ class ConnectionInfo(BaseModel):
     port: int | None = None
     username: str | None = None
     password: str | None = None
+    uri: str | None = None
+    tb_or_collection: str | None = None
 
 
 class DbConfig(BaseModel):

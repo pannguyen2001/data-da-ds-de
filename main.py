@@ -9,6 +9,7 @@ from typing import Any
 
 from src.common.cleanup_file_or_folder import cleanup_file_or_folder
 from src.common.constants import ResolveFileType
+from src.common.config import checkpoint_file
 from src.common.logger import logger
 from src.pipeline.engine import PipelineEngine
 
@@ -24,7 +25,11 @@ def main(setup: dict[str, Any]):
 
 if __name__ == "__main__":
     setup: dict[str, Any] = {
-        "setup": None,
+        "checkpoint": {
+            "file_path": checkpoint_file,
+            "file_type": "yaml",
+                "options": {"encoding": "utf-8", "errors": "raise", "mode": "r"}
+        },
         "source_config": [
             {
                 "file_path": Path("./configs/source.yaml"),
@@ -39,6 +44,9 @@ if __name__ == "__main__":
 
     cleanup_file_or_folder(
         "./reports", minutes=10, name_format="%Y-%m-%d %H-%M-%S", dry_run=False
+    )
+    cleanup_file_or_folder(
+        "./reports", days=2, dry_run=False
     )
     cleanup_file_or_folder("./logs", days=2, dry_run=False)
     cleanup_file_or_folder("./logs/error", days=2, dry_run=False)

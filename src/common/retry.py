@@ -47,18 +47,14 @@ def retry(
                     return function(*args, **kwargs)
                 except exceptions as e:
                     logger.warning(
-                        "[%s] Attempt %d/%d failed (%s): %s",
-                        function.__name__,
-                        attempt,
-                        times,
-                        type(e).__name__,
-                        e,
+                        f"[{function.__name__}] "
+                        f"Attempt {attempt}/{times} failed "
+                        f"({type(e).__name__}): {e}."
                     )
 
                     if attempt == times:
                         logger.exception(
-                            "[%s] All retry attempts failed.",
-                            function.__name__,
+                            f"[{function.__name__}] All retry attempts failed."
                         )
                         raise
 

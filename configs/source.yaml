@@ -1,51 +1,64 @@
-- name: "csv_file"
+- name: "excel_file"
   source_type: "file"
   config:
     file_path: "configs/data_source.xlsx"
     file_type: "excel"
     options: { "sheet_name": "data_source", "has_header": True }
 
-- name: "postgresql"
-  source_type: "database"
-  config:
-    engine: "postgresql"
-    connection_info:
-      database: "postgres"
-      host: "localhost"
-      port: 5432
-      user: "postgres"
-      password: "password"
-    query: "SELECT * FROM table"
-    options: null
+# - name: "test_db_connector_mongodb"
+#   source_type: "database"
+#   config:
+#     engine: "mongodb"
+#     connection_info:
+#       database: "capstonePrj"
+#       host: "cluster0.31zqdpv.mongodb.net"
+#       port: null
+#       username: "anotherone2xxx_db_user"
+#       password: "yGLAiIyVDWbKMN3S"
+#       uri: "mongodb+srv://anotherone2xxx_db_user:yGLAiIyVDWbKMN3S@cluster0.31zqdpv.mongodb.net/capstonePrj?appName=Cluster0&retryWrites=true&w=majority"
+#       tb_or_collection: "roles"
+#     query: { "name": "admin" }
+#     options: null
 
 - name: "test_opendb"
   source_type: "opendb"
   config:
     download_source_type: "ggdrive"
-    des_path: "./data/0_staging"
+    des_path: "./data/0_staging/22th"
     url: "https://drive.google.com/drive/folders/1lg6905H4ME_1ZFNTpFAREj8Bawa9zLnz"
     id: ""
-    skip_existing: False
-    dry_run: False
-    options: { "item_type": "folder", "quiet": False }
+    skip_existing: true
+    dry_run: true
+    options: { "item_type": "folder", "quiet": false }
 
-- name: "google"
-  source_type: "api"
-  config:
-    url: "https://google.com"
-    method: "GET"
-    options: null
+# - name: "16th_lesson_travel_and_hospitality"
+#   source_type: "opendb"
+#   config:
+#     download_source_type: "ggdrive"
+#     des_path: "./data/0_staging/16th"
+#     url: "https://drive.google.com/drive/folders/1al4BHEcqO7wqruFdKU3Kd-yNrvDX0gJ1"
+#     id: ""
+#     skip_existing: false
+#     dry_run: false
+#     options: { "item_type": "folder", "quiet": false }
 
-- name: "yahoo"
-  source_type: "api"
-  config:
-    url: "https://yahoo.com"
-    method: "GET"
-    options: null
+# - name: "google"
+#   source_type: "api"
+#   config:
+#     url: "https://google.com"
+#     method: "GET"
+#     options: null
 
-- name: "bing"
-  source_type: "api"
-  config:
-    url: "https://bing.com"
-    method: "GET"
-    options: null
+# - name: "yahoo"
+#   source_type: "api"
+#   config:
+#     url: "https://yahoo.com"
+#     method: "GET"
+#     options: null
+
+# - name: "bing"
+#   source_type: "api"
+#   config:
+#     url: "https://bing.com"
+#     method: "GET"
+#     options: null

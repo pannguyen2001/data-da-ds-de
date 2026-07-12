@@ -125,6 +125,8 @@ class OperationStatus(StrEnum):
     PASS = auto()
     FAIL = auto()
     SKIP = auto()
+    PENDING = auto()
+    RUNNING = auto()
 
 
 # class PipelineStatus(StrEnum):
@@ -134,6 +136,9 @@ class OperationStatus(StrEnum):
 
 
 class DownloadStatus(StrEnum):
+    PENDING = auto()
+    READY = auto()
+    DOWNLOADING = auto()
     SUCCESS = auto()
     FAILED = auto()
     SKIPPED = auto()
