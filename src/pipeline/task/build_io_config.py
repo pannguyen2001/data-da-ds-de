@@ -63,7 +63,7 @@ class BuildIOConfigTask(BaseTask):
 
         return loader_result.data
 
-    def _buidld_file_reader(self, file_config: dict) -> None:
+    def _build_file_reader(self, file_config: dict) -> None:
         """
         Build file reader.
 
@@ -117,7 +117,7 @@ class BuildIOConfigTask(BaseTask):
 
             match source_type:
                 case SourceType.FILE:
-                    self._buidld_file_reader(data_config)
+                    self._build_file_reader(data_config)
                 case SourceType.DATABASE:
                     self._build_db_connector(data_config)
                 case SourceType.API:
